@@ -2,7 +2,8 @@
 
 + [TypeScript 소개](#TypeScript-소개)
 + [vs code와 폴더 구조 세팅](#vs-code와-폴더-구조-세팅)
-+ tse 사용하기
++ [tse 사용하기](#tse-사용하기)
++ [watch와 구구단](#watch와-구구단)
 
 ## TypeScript 소개
 
