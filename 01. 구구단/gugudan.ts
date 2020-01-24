@@ -1,4 +1,11 @@
-const a:number = 1;
+let numberOne = Math.ceil(Math.random() * 9 );
+let numberTwo = Math.ceil(Math.random() * 9 );
+let result = numberOne * numberTwo;
 
-console.log('Hello javascript');
-console.log('Hello typescript');
+const word = document.createElement('div');
+word.textContent = `${numberOne} X ${numberTwo}`;
+document.body.append(word);
+
+const form = document.createElement('form');
+document.body.append(form);
+

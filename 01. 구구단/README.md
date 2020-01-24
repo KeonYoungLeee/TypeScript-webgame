@@ -2,6 +2,7 @@
 
 + [TypeScript 소개](#TypeScript-소개)
 + [vs code와 폴더 구조 세팅](#vs-code와-폴더-구조-세팅)
++ tse 사용하기
 
 ## TypeScript 소개
 
@@ -28,5 +29,30 @@
 ```html
 <script src="gugudan.ts"></script>
 ```
-이렇게 실행하면 안된다. 그래서 브라우저에서 자바스크립트 실행할 때에는 타입스크립트가 아니라 자바스크립를 이용해야한다.
+이렇게 실행하면 안된다. 그래서 브라우저에서 자바스크립트 실행할 때에는 타입스크립트가 아니라 자바스크립를 이용해야한다.<br>
 다음 내용부터 바꾸는 방법을 자세히 알려준다.
+
+
+## tse 사용하기
+
+tsc의 의미는 <strong>typescript compile(타입스크립트 컴파일)</strong> 이다.<br>
+
+<pre><code>npm i -g typescript
+</code></pre>
+경로 실수 하지말아야 한다.
+
+CMD에서 `tsc gugudan.ts` 를 하면 `gugudan.js`가 나온다. <br>
+<strong>tsc</strong>를 통해서 ts파일을 js파일로 바꾼다. 그리고 브라우저는 js를 실행한다. HTML은 항상 .js를 연결한다. 
+
+
+## watch와 구구단
+
+자꾸 타입스크립트 저장하고 tsc gugudan.ts하는게 슬슬 귀찮아 쯤에 tsc gugudan.ts -w를 해볼 것이다.<br>
+
+tsc gugudan.ts -w 에서 -w를 추가를 해본다. <br>
+
+왜냐하면 gugudan.ts에서 코드를 수정하면 코드 수정한 만큼 `tsc gugudan.ts` 해줘야하기 때문에 <br>
+-w (watch옵션) 를 넣고 저장하는 순간,  gugudan.ts감시하고 그 순간순간마다 컴파일을 바로해주기 때문에 편하다. `tsc gugudan.ts` 일일히 안해줘도 된다!!!. <br>
+에러도 같이 나오면 검증도 바로해주는게 편한다. <br>
+
+
