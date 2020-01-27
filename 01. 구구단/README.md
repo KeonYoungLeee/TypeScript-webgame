@@ -4,6 +4,7 @@
 + [vs code와 폴더 구조 세팅](#vs-code와-폴더-구조-세팅)
 + [tse 사용하기](#tse-사용하기)
 + [watch와 구구단](#watch와-구구단)
++ [구구단 완성하기](#구구단-완성하기)
 
 ## TypeScript 소개
 
@@ -50,10 +51,67 @@ CMD에서 `tsc gugudan.ts` 를 하면 `gugudan.js`가 나온다. <br>
 
 자꾸 타입스크립트 저장하고 tsc gugudan.ts하는게 슬슬 귀찮아 쯤에 tsc gugudan.ts -w를 해볼 것이다.<br>
 
-tsc gugudan.ts -w 에서 -w를 추가를 해본다. <br>
+`tsc gugudan.ts -w` 에서 <strong>-w</strong>를 추가를 해본다. <br>
 
 왜냐하면 gugudan.ts에서 코드를 수정하면 코드 수정한 만큼 `tsc gugudan.ts` 해줘야하기 때문에 <br>
 -w (watch옵션) 를 넣고 저장하는 순간,  gugudan.ts감시하고 그 순간순간마다 컴파일을 바로해주기 때문에 편하다. `tsc gugudan.ts` 일일히 안해줘도 된다!!!. <br>
 에러도 같이 나오면 검증도 바로해주는게 편한다. <br>
 
 
+## 구구단 완성하기
+
+```ts
+let numberOne = Math.ceil(Math.random() * 9);
+let numberTwo = Math.ceil(Math.random() * 9);
+let result = numberOne * numberTwo;
+
+const wordNumber = document.createElement('div');
+wordNumber.textContent = `${numberOne} 곱하기 ${numberTwo}는?`;
+document.body.append(wordNumber);
+
+const form = document.createElement('form');
+document.body.append(form);
+
+const input = document.createElement('input');
+input.type = 'number';
+form.append(input);
+
+const button = document.createElement('button');
+button.textContent = '입력!';
+form.append(button);
+
+const resultDiv = document.createElement('div');
+document.body.append(resultDiv);
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (result === Number(input.value)) { // 정답 맞춘 경우
+    resultDiv.textContent = '딩동댕';
+    numberOne = Math.ceil(Math.random() * 9);
+    numberTwo = Math.ceil(Math.random() * 9);
+    result = numberOne * numberTwo;
+    wordNumber.textContent = `${numberOne} 곱하기 ${numberTwo}는?`;
+    input.value = '';
+    input.focus();
+  } else { // 틀린 경우
+    resultDiv.textContent = '땡';
+    input.value = '';
+    input.minLength;
+    input.focus();
+  }
+});
+```
+
+`const input = document.createElement('input');` <br>
+여기에서 <br>
+`input.name` 하면 에러가 나온다. <br>
+에러 내용이 `Property 'name' does not exist on type 'void'` 나온다. <br>
+
+`result === input.value`의 간단한 에러가 있다. 특히 형변환을 해줘야한다. <br> 
+안 해주면 계속 에러가 나온다.<br>
+`result === Number(input.value)` Number로 숫자형 타입으로 해주었다. <br> 
+
+사실 타입스크립트 코드는 없는데 파일확장자는 ts이다. <br> 
+> ts파일과 ts파일 같이 띄워놓으면 에러 표시가 뜬다. 그래서 js파일을 꺼야한다. <br> 
+
+완성하였으면 `tsc gugudan.ts` 를 해준다
