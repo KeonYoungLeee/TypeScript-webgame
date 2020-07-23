@@ -1,4 +1,4 @@
-# 구구단
+# 강좌1
 
   + [TypeScript 소개](#typescript-소개)
   + [TypeScript란 ?](#typescript란-)
@@ -10,6 +10,7 @@
   + [질문(^, npx의미)](#질문)
 
 ## TypeScript 소개
+[위로올라가기](#강좌1)
 
 ### TypeScript란 ? 
 <strong>TypeScript</strong>는 JavaScript의 superset이라고 한다. 자바스크립트의 모든 시스템을 가지고있는데, 타입이 있다. <br>
@@ -25,6 +26,7 @@
 
 
 ## vs code와 폴더 구조 세팅
+[위로올라가기](#강좌1)
 
 <pre><code>npm i typescript 
 
@@ -39,6 +41,7 @@
 
 
 ## tse 사용하기
+[위로올라가기](#강좌1)
 
 tsc의 의미는 <strong>typescript compile(타입스크립트 컴파일)</strong> 이다.<br>
 
@@ -51,6 +54,7 @@ CMD에서 `tsc gugudan.ts` 를 하면 `gugudan.js`가 나온다. <br>
 
 
 ## watch와 구구단
+[위로올라가기](#강좌1)
 
 자꾸 타입스크립트 저장하고 tsc gugudan.ts하는게 슬슬 귀찮아 쯤에 tsc gugudan.ts -w를 해볼 것이다.<br>
 
@@ -62,6 +66,7 @@ CMD에서 `tsc gugudan.ts` 를 하면 `gugudan.js`가 나온다. <br>
 
 
 ## 구구단 완성하기
+[위로올라가기](#강좌1)
 
 ```ts
 let numberOne = Math.ceil(Math.random() * 9);
@@ -120,6 +125,7 @@ form.addEventListener('submit', (e) => {
 완성하였으면 `tsc gugudan.ts` 를 해준다
 
 ## d.ts 파일
+[위로올라가기](#강좌1)
 
 `form.addEventListener('submit', function (e) {` <br>
 위에서 `Go to Definition`(F12)을 하면, `lib.dom.d.ts`로 이동할 수가 있다. <br>
@@ -131,6 +137,7 @@ form.addEventListener('submit', (e) => {
 다음시간에 로딩하는 방법 tsconfig.js를 알려준다. <br>
 
 ## 질문
+[위로올라가기](#강좌1)
 
 시스템 안정을 위해서 타입스크립트를 사용하게 된다. <br>
 간단한 시스템이면 타입스크립트를 도입하면 힘들지만, 확장성을 고려하면 타입스크립트을 하는게 좋다. <br>
