@@ -6,6 +6,7 @@
   - [상수, enum, 함수, 객체 타입](#상수,-enum,-함수,-객체-타입)
   - [never, any, 타입 캐스팅](#never,-any,-타입-캐스팅)
   - [숫자야구 만들기](#숫자야구-만들기)
+  - [질문](#질문)
 
 ## tsconfig파일 다뤄보기
 [위로올라가기](#강좌2)
@@ -53,7 +54,7 @@ https://www.typescriptlang.org/docs/handbook/compiler-options.html
   - typescript를 감시하는 역할
 
 ### tsconfig.json 예시
-```json
+```js
 {
   "compilerOptions": {
     "strict": true,
@@ -359,5 +360,20 @@ form.addEventListener('submit', (event :Event) => {
 
 > **남이 만든 거는 타입 추론을 한다**. (업데이트하면 바꿔지기 때문에 추론으로 한다.) <br>
 >> 그러면 코드가 꼬여지기 때문에 남이 만든 거는 잘 건들지 않는다. <br>
+
 > 내가 만든 거는 타입을 만든다. <br>
 
+## 질문
+[위로올라가기](#강좌2)
+
+#### 타입스크립트에도 js하는 방법
+```js
+{
+  "compilerOptions": {
+    "strict": true,
+    "allowJs" : true,
+    "checkJs" : true,
+  },
+  "exclude": [".js"],
+}
+```
