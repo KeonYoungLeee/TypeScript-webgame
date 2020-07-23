@@ -3,6 +3,7 @@
   - [tsconfig파일 다뤄보기](#tsconfig파일-다뤄보기)
   - [target, module, 기타옵션](#target,-module,-기타옵션)
   - [기본 타입, 배열, 튜플](#기본-타입,-배열,-튜플)
+  - [상수, enum, 함수, 객체 타입](#상수,-enum,-함수,-객체-타입)
 
 ## tsconfig파일 다뤄보기
 [위로올라가기](#강좌2)
@@ -76,7 +77,7 @@ https://www.typescriptlang.org/docs/handbook/compiler-options.html
 ## 기본 타입, 배열, 튜플
 [위로올라가기](#강좌2)
 
-### 타입 지정하기 1
+### 타입 지정하기 (number, string, boolean)
 ```js
 // number, string, boolean
 let num: number = 3 // number라는 타입을 설정해준다.
@@ -87,7 +88,21 @@ let bool: boolean;
 let arr: number[] = [1, 2, 3];
 let arr: Array<number> = [1, 2, 3];
 ```
+### 타입 지정하기 (Object) - 1
+```js
+const obj: object = { a: 'b' }; // 안 하는 이유는 범위가 광범위해져서 안한다.
 
+// a, b를 다 넣어줘야한다.
+const obj: { a: string, b: number } = { a: 'b', b: 3 }; // 직접 내부에 타입을 설정해준다.
+```
+
+### 타입 지정하기 (Object) - 2
+```js
+// 여기에 보면 b에는 ?가 있다.
+// ? : 있을지 없을지 
+const obj: { a: string, b?: number } = { a: 'b'}; 
+```
+> 하지만, 중복된 느낌이 되어서, 인터페이스로 해주는 경우가 있다.
 
 ### 타입 바꿔보기
 ```js
@@ -130,3 +145,105 @@ let arr: [boolean, 2, string] = [true, 2, '3'];
 // 위 처럼 2를 넣으면 2만 들어갈 수 있다. 
 ```
 > 단, tuple에 push하는 행위는 막지 못한다.
+
+## 상수, enum, 함수, 객체 타입
+[위로올라가기](#강좌2)
+
+### 상수
+```js
+// 상수는 타입스크립트 전용 문법
+let arr = [true, 2, '3'] as const;
+// arr가 상수가 된다.(readonly)
+
+// 여기에서 객체에서 사용할 때 엄청 좋아진다.
+// 예로들면
+const obj = { a: 'b' };
+obj.a = 'c'; // 바꿔줄 수가 있다.
+
+const obj = { a: 'b' } as const;
+obj.a = 'c'; // 내부 값들을 바꿔줄 수가 없다. 에러가 나온다
+
+```
+
+### enum
+#### numberbaseball.ts
+```js
+enum Color { Red, Green, Blue }
+let c: Color = Color.Green;
+```
+를 작성해준 다음에 `tsc numberbaseball.ts`를 하면, `numberbaseball.js`파일이 생긴다. <br>
+#### numberbaseball.js
+```js
+// enum Color { Red, Green, Blue }
+// let c: Color = Color.Green;
+
+var Color;
+(function (Color) {
+    Color[Color["Red"] = 0] = "Red";
+    Color[Color["Green"] = 1] = "Green";
+    Color[Color["Blue"] = 2] = "Blue";
+})(Color || (Color = {}));
+var c = Color.Green;
+
+// 위에 의미는 밑처럼 되어진다.
+// Color[0] === 'Red';
+// Color['Red'] === 0;
+// Color[1] === 'Green';
+// Color['Green'] === 1;
+// Color[2] === 'Blue';
+// Color['Blue'] === 2;
+```
+
+### 함수
+```js
+const n = null; // null이 된다
+const n = undefined; // undefined가 된다
+
+// 리턴이 없을 경우
+function notReturn(): void {
+  // sourece code
+}
+
+// 리턴이 있을 경우 (타입을 명시해서 함수를 작성하는 방법)
+function add(a: number, b: number): number {
+  // a: number, b: number는 매개변수
+  // number는 return
+
+  return a + b;
+}
+
+// 고차 함수 일 경우 1
+function add(a: number, b: number): (c: string) => number {
+  return (c: string) => {
+    return 3;
+  }
+}
+
+// 고차 함수 일 경우 2
+function add(a: number, b: number): (c: string) => (d: string) => boolean) {
+  return (c: string) => {
+    return (d: string) => {
+      return false;
+    }
+  }
+}
+```
+
+### 객체 타입
+```js
+const obj2 = { a: (b: number) => string } = {
+  a(b: number) {
+    return 'hello'
+  }
+}
+
+const obj2 = { a: (b: number, c?: string) => string } = { // 여기에서 ?가 오버로딩의 일종이 될 수가 있다.
+  a(b: number, c?: string) { // 여기에서 ?가 오버로딩의 일종이 될 수가 있다.
+    return 'hello'
+  }
+}
+
+
+```
+> 타입스크립트에서는 오버로딩을 명확하게 제시를 할 수가 있다. <br>
+
