@@ -1,5 +1,2 @@
-function add(a: number, b: number): (c: string) => number {
-  return (c: string) => {
-    return 3;
-  }
-}
+const hello: number = 0; // 숫자형 타입
+const strHello = hello  as string;

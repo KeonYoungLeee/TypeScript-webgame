@@ -4,6 +4,7 @@
   - [target, module, 기타옵션](#target,-module,-기타옵션)
   - [기본 타입, 배열, 튜플](#기본-타입,-배열,-튜플)
   - [상수, enum, 함수, 객체 타입](#상수,-enum,-함수,-객체-타입)
+  - [never, any, 타입 캐스팅](#never,-any,-타입-캐스팅)
 
 ## tsconfig파일 다뤄보기
 [위로올라가기](#강좌2)
@@ -246,4 +247,39 @@ const obj2 = { a: (b: number, c?: string) => string } = { // 여기에서 ?가 �
 
 ```
 > 타입스크립트에서는 오버로딩을 명확하게 제시를 할 수가 있다. <br>
+
+## never, any, 타입 캐스팅
+[위로올라가기](#강좌2)
+
+### never
+```js
+const arr2: [] = [];
+arr2.push(3); // Argument of type '3' is not assignable to parameter of type 'never'.ts(2345)
+
+```
+> 잘못 만들어서 never가 나타난다. <br>
+> 대부분 배열을 잘 못 만든경우에 never가 나온다. <br>
+
+### any
+```js
+const h1: any = [];
+```
+> 뭐든지 다 선언이 가능하다. <br>
+> 하지만, 되도록이면 사용하지 않도록하자. <br>
+> 타입 정의할 때 너무 복잡해서 못 만들겠을 경우 any를 사용한다. <br>
+
+### 타입 캐스팅
+```js
+// 타입 캐스팅
+const hello: number = 0; // 숫자형 타입
+const strHello = hello as unknown as string; // 숫자형 타입 -> 문자열 타입 (강제로 바꿔주었다.)
+// 강제 타입해줄 때 unknown을 사용해주어야 한다.
+// unknown을 사용하지 않으면 밑에와 같이 에러가 나온다.
+// Conversion of type 'number' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.ts(2352)
+
+// 타입 캐스팅
+const div = document.createElement('div');
+const a = div as HTMLElement; // 인터페이스를 활용하여서 바꾸어주었다.
+const a = div as unknown as string; // div타입 -> string타입 (강제로 바꿔주었다.)
+```
 
