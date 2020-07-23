@@ -2,6 +2,7 @@
 
   - [tsconfig파일 다뤄보기](#tsconfig파일-다뤄보기)
   - [target, module, 기타옵션](#target,-module,-기타옵션)
+  - [기본 타입, 배열, 튜플](#기본-타입,-배열,-튜플)
 
 ## tsconfig파일 다뤄보기
 [위로올라가기](#강좌2)
@@ -71,3 +72,61 @@ https://www.typescriptlang.org/docs/handbook/compiler-options.html
 
 공식문서 읽을 때 기본적인 Handbook을 다 읽어보고, <br>
 그 다음에는 타입스크립트의 업데이트 역사를 보는게 좋을 것이다. <br>
+
+## 기본 타입, 배열, 튜플
+[위로올라가기](#강좌2)
+
+### 타입 지정하기 1
+```js
+// number, string, boolean
+let num: number = 3 // number라는 타입을 설정해준다.
+let str: string;
+let bool: boolean;
+
+// 배열 설정하기 (표기법이 2개가 있다.)
+let arr: number[] = [1, 2, 3];
+let arr: Array<number> = [1, 2, 3];
+```
+
+
+### 타입 바꿔보기
+```js
+let num: number;
+let str: string = num.toString(); // 숫자 형 타입을 문자형으로 바꿔준다.
+```
+
+### 잘못 된 타입
+```js
+// 잘못 된 타입
+let num: Number;
+let str: String;
+let bool: Boolean;
+
+// 올바른 타입
+let num: number;
+let str: string;
+let bool: boolean;
+```
+> 여기서 주의 할 것이 타입스크립트에 대문자를 넣어주면 안 된다. <br>
+> 타입스크립트의 타입은 **소문자**이다. 대문자랑 다르다. <br>
+> 대문자는 타입설정아니라 객체이다. <br>
+> 항상 조심하도록 해야한다. <br>
+
+### 배열에서 다른 타입도 입력할 경우
+```js
+// string, number, boolean만 들어갈 수 있도록 설정해주었다.
+let arr: (string | number | boolean)[] = [true, 2, 'hello'];
+
+
+// 좀 더 엄격하게 할 경우도 있다.
+let arr: [boolean, number, string] = [true, 2, '3']; // Tuple이라고 부른다.
+// arr[0] => boolean타입만 가능
+// arr[1] => number타입만 가능
+// arr[2] => string타입만 가능
+
+// 전자의 arr설정보다 후자의 arr처럼 엄격하게 설정해주는 것이좋다
+
+let arr: [boolean, 2, string] = [true, 2, '3'];
+// 위 처럼 2를 넣으면 2만 들어갈 수 있다. 
+```
+> 단, tuple에 push하는 행위는 막지 못한다.
