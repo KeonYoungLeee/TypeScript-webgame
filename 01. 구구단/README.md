@@ -1,10 +1,12 @@
 # 구구단
 
-+ [TypeScript 소개](#TypeScript-소개)
-+ [vs code와 폴더 구조 세팅](#vs-code와-폴더-구조-세팅)
-+ [tse 사용하기](#tse-사용하기)
-+ [watch와 구구단](#watch와-구구단)
-+ [구구단 완성하기](#구구단-완성하기)
+  - [TypeScript 소개](#typescript-소개)
+  - [TypeScript란 ?](#typescript란-)
+  - [vs code와 폴더 구조 세팅](#vs-code와-폴더-구조-세팅)
+  - [tse 사용하기](#tse-사용하기)
+  - [watch와 구구단](#watch와-구구단)
+  - [구구단 완성하기](#구구단-완성하기)
+  - [d.ts 파일](#d.ts-파일)
 
 ## TypeScript 소개
 
@@ -115,3 +117,15 @@ form.addEventListener('submit', (e) => {
 > ts파일과 ts파일 같이 띄워놓으면 에러 표시가 뜬다. 그래서 js파일을 꺼야한다. <br> 
 
 완성하였으면 `tsc gugudan.ts` 를 해준다
+
+## d.ts 파일
+
+`form.addEventListener('submit', function (e) {` <br>
+위에서 `Go to Definition`(F12)을 하면, `lib.dom.d.ts`로 이동할 수가 있다. <br>
+
+**.ts파일** vs **.d.ts파일** <br>
+**.ts** : 실제로 코딩하는 부분이다. <br>
+**.d.ts** : 우리가 타입을 직접 만드는 경우가 있는데, 타입들만 적어둔다. <br>
+
+다음시간에 로딩하는 방법 tsconfig.js를 알려준다. <br>
+
