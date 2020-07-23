@@ -258,6 +258,10 @@ const obj2 = { a: (b: number, c?: string) => string } = { // 여기에서 ?가 �
 const arr2: [] = [];
 arr2.push(3); // Argument of type '3' is not assignable to parameter of type 'never'.ts(2345)
 
+// 해결방안
+const arr2: number[] = [];
+arr2.push(3);
+
 ```
 > 잘못 만들어서 never가 나타난다. <br>
 > 대부분 배열을 잘 못 만든경우에 never가 나온다. <br>
