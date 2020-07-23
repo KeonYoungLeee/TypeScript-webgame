@@ -5,6 +5,7 @@
   - [기본 타입, 배열, 튜플](#기본-타입,-배열,-튜플)
   - [상수, enum, 함수, 객체 타입](#상수,-enum,-함수,-객체-타입)
   - [never, any, 타입 캐스팅](#never,-any,-타입-캐스팅)
+  - [숫자야구 만들기](#숫자야구-만들기)
 
 ## tsconfig파일 다뤄보기
 [위로올라가기](#강좌2)
@@ -282,4 +283,81 @@ const div = document.createElement('div');
 const a = div as HTMLElement; // 인터페이스를 활용하여서 바꾸어주었다.
 const a = div as unknown as string; // div타입 -> string타입 (강제로 바꿔주었다.)
 ```
+
+## 숫자야구 만들기
+[위로올라가기](#강좌2)
+
+```js
+const { body } = document;
+let candidate: number[];
+let array: number[] = []; // number[]를 안해주면 never가 나온다.
+const arr: [number, number] = [1,2];
+
+function chooseNumber(): void {
+  candidate = [1,2,3,4,5,6,7,8,9];
+  array = [];
+  for (let i: number = 0; i < 4; i += 1) {
+    const chosen = candidate.splice(Math.floor(Math.random() * (9 - i)), 1)[0];
+    array.push(chosen);
+  }
+}
+
+chooseNumber();
+console.log(array);
+
+const result = document.createElement('h1');
+body.append(result);
+const form = document.createElement('form');
+document.body.append(form);
+const input = document.createElement('input');
+form.append(input);
+input.type = 'text';
+input.maxLength = 4;
+const button = document.createElement('button');
+button.textContent = '입력!';
+form.append(button);
+
+let wrongCount = 0;
+form.addEventListener('submit', (event :Event) => {
+  event.preventDefault();
+  const answer = input.value;
+  if (answer === array.join('')) { // 답이 맞으면
+      result.textContent = '홈런';
+      input.value = '';
+      input.focus();
+      chooseNumber();
+      wrongCount = 0;
+  } else { // 답이 틀리면
+    const answerArray = answer.split('');
+    let strike = 0;
+    let ball = 0;
+    wrongCount += 1;
+    if (wrongCount > 10) { // 10번 넘게 틀린 경우
+        result.textContent = `10번 넘게 틀려서 실패! 답은 ${array.join(',')} 였습니다!`;
+        input.value = '';
+        input.focus();
+        chooseNumber();
+        wrongCount = 0;
+    } else { // 10번 미만으로 틀린 경우
+      console.log('답이 틀리면', answerArray);
+      for (let i: number = 0; i <= 3; i += 1) {
+        if (Number(answerArray[i]) === array[i]) { // 같은 자리인지 확인
+          console.log('같은 자리?');
+          strike += 1;
+        } else if (array.indexOf(Number(answerArray[i])) > -1) { // 같은 자리는 아니지만, 숫자가 겹치는지 확인
+          console.log('겹치는 숫자?');
+          ball += 1;
+        }
+      }
+      result.textContent = `${strike}스트라이크 ${ball}볼입니다.`;
+      input.value = '';
+      input.focus();
+    }
+  }
+});
+```
+
+> **남이 만든 거는 타입 추론을 한다**. (업데이트하면 바꿔지기 때문에 추론으로 한다.) <br>
+>> 그러면 코드가 꼬여지기 때문에 남이 만든 거는 잘 건들지 않는다. <br>
+> 내가 만든 거는 타입을 만든다. <br>
 
