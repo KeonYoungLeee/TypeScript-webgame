@@ -1,8 +1,10 @@
-# 강좌2(숫자야구)
+# 강좌2
 
   - [tsconfig파일 다뤄보기](#tsconfig파일-다뤄보기)
+  - [target, module, 기타옵션](#target,-module,-기타옵션)
 
 ## tsconfig파일 다뤄보기
+[위로올라가기](#강좌2)
 
 지난 시간에 js파일과 ts파일을 동시에 사용하면 ts 파일에서 에러가 나온다. 그 이유는 <br>
 **tsconfig.json**이 없어서 에러가 난다.
