@@ -134,20 +134,23 @@ let bool: boolean;
 ```js
 // string, number, boolean만 들어갈 수 있도록 설정해주었다.
 let arr: (string | number | boolean)[] = [true, 2, 'hello'];
+const arrNum: number[] = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+const arrString: string[] = ['Imperial Stout', 'India Pale Ale', 'Weizenbock'];
 
-
-// 좀 더 엄격하게 할 경우도 있다.
+// 좀 더 엄격하게 배열을 선언 할 경우가 있다. (이거를 튜플이라고 한다.)
+// 튜플 타입을 이용해 원소의 수와 각 원소의 타입이 정확히 지정된 배열의 타입을 정의할 수 있다.
 let arr: [boolean, number, string] = [true, 2, '3']; // Tuple이라고 부른다.
 // arr[0] => boolean타입만 가능
 // arr[1] => number타입만 가능
 // arr[2] => string타입만 가능
 
-// 전자의 arr설정보다 후자의 arr처럼 엄격하게 설정해주는 것이좋다
+// 전자보다 후자처럼 엄격하게 설정해주는 것이좋다
 
+// 보다 더 엄격한 경우
 let arr: [boolean, 2, string] = [true, 2, '3'];
 // 위 처럼 2를 넣으면 2만 들어갈 수 있다. 
 ```
-> 단, tuple에 push하는 행위는 막지 못한다.
+> 단, **tuple에 push하는 행위는 막지 못한다.**
 
 ## 상수, enum, 함수, 객체 타입
 [위로올라가기](#강좌2)
