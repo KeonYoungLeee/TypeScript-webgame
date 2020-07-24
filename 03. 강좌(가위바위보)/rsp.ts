@@ -1,4 +1,4 @@
-let imgCoords = 0;
+let imgCoords: RSP[keyof RSP] = '0';
 
 interface RSP {
   readonly ROCK: '0';
@@ -19,12 +19,12 @@ const score = {
 } as const;
 
 function computerChoice(imgCoords: RSP[keyof RSP] ) :keyof RSP {
-  return (Object.keys(rsp) as ['ROCK', 'SCISSORS', 'PAPER']).find((k) => rsp[k] === imgCoords);
+  return (Object.keys(rsp) as ['ROCK', 'SCISSORS', 'PAPER']).find((k) => rsp[k] === imgCoords)!;
 }
 
 document.querySelectorAll('.btn').forEach((btn) => {
-  btn.addEventListener('click', function() {
-    const myChoice = this.textContent;
+  btn.addEventListener('click', function(this: HTMLButtonElement, e: Event) {
+    const myChoice = this.textContent as keyof RSP; 
     const myScore = score[myChoice];
     const computerScore = score[computerChoice(imgCoords)];
     const diff = myScore - computerScore;

@@ -1,4 +1,5 @@
-var imgCoords = 0;
+"use strict";
+var imgCoords = '0';
 var rsp = {
     ROCK: '0',
     SCISSORS: '-142px',
@@ -13,7 +14,7 @@ function computerChoice(imgCoords) {
     return Object.keys(rsp).find(function (k) { return rsp[k] === imgCoords; });
 }
 document.querySelectorAll('.btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+    btn.addEventListener('click', function (e) {
         var myChoice = this.textContent;
         var myScore = score[myChoice];
         var computerScore = score[computerChoice(imgCoords)];

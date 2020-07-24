@@ -3,12 +3,13 @@
   - [가위바위보 게임과 인터페이스](#가위바위보-게임과-인터페이스)
   - [인터페이스 특성과 type alias](#인터페이스-특성과-type-alias)
   - [기본 d.ts 문제 해결하기](#기본-d.ts-문제-해결하기)
+  - [this와 타입 범위의 이해](#this와-타입-범위의-이해)
 
 
 
 
 ## 가위바위보 게임과 인터페이스
-[위로올라가기](#강좌2)
+[위로올라가기](#강좌3)
 
 
 #### 상수 설정
@@ -148,7 +149,7 @@ interface RSP {
 ```
 
 ## 인터페이스 특성과 type alias
-[위로올라가기](#강좌2)
+[위로올라가기](#강좌3)
 
 ### 인터페이스 특징
 
@@ -281,7 +282,7 @@ const example: Exapmle {
 
 
 ## 기본 d.ts 문제 해결하기
-[위로올라가기](#강좌2)
+[위로올라가기](#강좌3)
 
 #### 타입스크립트 범위
 find가 범위로 인해서 문제가 일어난다. 그래서 범위를 좁게 잡아줘야한다.
@@ -350,3 +351,92 @@ function computerChoice(imgCoords: RSP[keyof RSP] ) :keyof RSP {
 >> **undefined를 없애주기 위해서 !(느낌표)를 사용**하였다. 
 
 
+## this와 타입 범위의 이해
+[위로올라가기](#강좌3)
+
+
+#### 수정 전
+```js
+document.querySelectorAll('.btn').forEach((btn) => {
+  btn.addEventListener('click', function() {
+    const myChoice = this.textContent;
+    const myScore = score[myChoice];
+    const computerScore = score[computerChoice(imgCoords)];
+    
+    ...생략
+});
+```
+> this의 에러 : `'this' implicitly has type 'any' because it does not have a type annotation.ts(2683)` <br>
+
+
+#### 수정 후
+```js
+document.querySelectorAll('.btn').forEach((btn) => {
+  btn.addEventListener('click', function(this: HTMLButtonElement, e: Event) {
+    const myChoice = this.textContent; 
+    const myScore = score[myChoice];
+    const computerScore = score[computerChoice(imgCoords)];
+    
+    ...생략
+});
+```
+
+> `btn.addEventListener('click', function(e: event) {` <br>
+>> this를 사용할 경우에는 첫 번째 매개변수를 `e: event`가 아니라 `this: HTMLButtonElement` 를 사용해야 한다. <br>
+>>  **`this: HTMLButtonElement`를 첫 번째 매겨변수에 넣어주기!!**
+
+
+#### this.textContent 타입 범위 좁혀주기 
+```js
+document.querySelectorAll('.btn').forEach((btn) => {
+  btn.addEventListener('click', function(this: HTMLButtonElement, e: Event) {
+    const myChoice = this.textContent as keyof RSP; 
+    const myScore = score[myChoice];
+    const computerScore = score[computerChoice(imgCoords)];
+    
+    ...생략
+});
+```
+> 타입스크립트에서 `this.textContent`를 사용하면 **string | null**이 나온다. <br>
+>>  string | null를 범위 줄이기 위해서 **keyof**를 사용해준다. <br>
+
+#### imgCoords 타입 범위 좁혀주기
+```js
+// 수정 전
+let imgCoords = '0'; // 이거 숫자형으로 되어있는데 문자열이 되어야함.. 잘 못 적어줬음.. 
+
+// 수정 후
+let imgCoords: RSP[keyof RSP] = '0';
+```
+> `Argument of type 'number' is not assignable to parameter of type '"0" | "-142px" | "-284px"'.ts(2345)` <br>
+>> 해결하면 `let imgCoords: "0" | "-142px" | "-284px"` 이와 같이 나온다.
+
+#### 범위 생각하기
+```js
+let imgCoords: RSP[keyof RSP] = '0'; // 이거를 좁은 범위로 표현하면 된다.
+
+...생략
+
+// 위에 let imgCoords랑 같이 해주는 방법이 있다. 또 다른 방법도 있다(밑에)
+function computerChoice(imgCoords: RSP[keyof RSP] ) :keyof RSP {
+  return (Object.keys(rsp) as ['ROCK', 'SCISSORS', 'PAPER']).find((k) => rsp[k] === imgCoords)!;
+}
+
+// imgCoords를 string으로 해주어도 괜찮다.
+function computerChoice(imgCoords: string ) :keyof RSP { // imgCoords를 넒은 범위로 생각하면 된다.
+  return (Object.keys(rsp) as ['ROCK', 'SCISSORS', 'PAPER']).find((k) => rsp[k] === imgCoords)!;
+}
+```
+
+> 이제부터 tsc를 실행할 때에는 **npx tsc -w** 를 사용해준다.
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["ES5", "ES6", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ESNext", "DOM"]
+  },
+  "exclude": [".js"],
+  "include": ["rsp.ts"],
+}
+```
+include를 추가해준다.
