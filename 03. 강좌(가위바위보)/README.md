@@ -4,6 +4,7 @@
   - [인터페이스 특성과 type alias](#인터페이스-특성과-type-alias)
   - [기본 d.ts 문제 해결하기](#기본-d.ts-문제-해결하기)
   - [this와 타입 범위의 이해](#this와-타입-범위의-이해)
+  - [가위바위보 완성하기](#가위바위보-완성하기)
 
 
 
@@ -440,3 +441,106 @@ function computerChoice(imgCoords: string ) :keyof RSP { // imgCoords를 넒은 
 }
 ```
 include를 추가해준다.
+
+
+## 가위바위보 완성하기
+[위로올라가기](#강좌3)
+
+#### 타입스크립트 에러
+```js
+... 생략
+
+let interval: number;
+function intervalMaker() {
+  interval = setInterval(function () {
+    if (imgCoords === rsp.ROCK) {
+      imgCoords = rsp.SCISSORS;
+    } else if (imgCoords === rsp.SCISSORS) {
+      imgCoords = rsp.PAPER;
+    } else {
+      imgCoords = rsp.ROCK;
+    }
+    document.querySelector('#computer').style.background = `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoords} 0`;
+  }, 100);
+}
+```
+> document.querySelector를 사용하면 `Object is possibly 'null'.ts(2531)`가 나온다. <br>
+>> 타입스크립트는 HTML을 인식을 못해서 null의 가능성이 있다. <br>
+
+#### 에러 해결하기 1 (document.querySelector)
+```js
+// !(느낌표)를 사용하면, 에러 해결가능한데 프로그래밍의 에러 가능성이 있어서 잘 안 사용하는게 좋다.
+document.querySelector('#computer')!.style.background = `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoords} 0`;
+
+// !(느낌표)를 대체하는 방법
+if (document.querySelector('#computer')) {
+  document.querySelector('#computer').style.background = `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoords} 0`;
+}
+```
+
+#### 에러 해결하기 2 (document.querySelector OR style)
+```js
+// lib.dom.d.ts에 자세히 들여다보면,
+// querySelector<E extends Element = Element>(selectors: string): E | null;
+// 제너레이터가 나오는데 제너레이터의 해결방법이 있는데, 나중에 제너레이터를 사용해서 일단 생략한다.
+if (document.querySelector('#computer')) {
+  (document.querySelector('#computer') as HTMLDivElement).style.background = `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoords} 0`;
+}
+
+```
+> `Property 'style' does not exist on type 'Element'.ts(2339)` <br>
+>> Element의 style이 존재하지 않는다라는 의미다. <br>
+>> `document.querySelector`을 `as HTMLDivElement`로 **타입캐스팅**을 해준다. <br>
+>> 즉, 위의 의미를 해석해본다면 Element에는 style이 없고, HTMLDivElement에는 style이 있다.
+
+#### 에러 해결하기 2 (document.querySelector OR style) -  변수로 따로 설정
+```js
+const computer = document.querySelector('#computer');
+if (computer) {
+  (computer as HTMLDivElement).style.background = `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoords} 0`;
+}
+```
+
+#### 코드 추가 및 수정
+```js
+...생략
+
+let interval: number; // 위로 올려주기
+document.querySelectorAll('.btn').forEach((btn) => {
+  btn.addEventListener('click', function(this: HTMLButtonElement, e: Event) {
+    clearInterval(interval); // clearInterval 추가하기
+    setTimeout(intervalMaker, 2000); // setTimeout 추가하기
+    const myChoice = this.textContent as keyof RSP; 
+    const myScore = score[myChoice];
+    const computerScore = score[computerChoice(imgCoords)];
+    const diff = myScore - computerScore;
+
+    if (diff === 0 ) {
+      console.log('비겼습니다.');
+    } else if ( [-1, 2].includes(diff) ) { // indexOf -> includes로 바꿔주기
+      console.log('이겼습니다.');
+    } else {
+      console.log('졌습니다.');
+    }
+  });
+});
+
+function intervalMaker() {
+  interval = setInterval(function () {
+    if (imgCoords === rsp.ROCK) {
+      imgCoords = rsp.SCISSORS;
+    } else if (imgCoords === rsp.SCISSORS) {
+      imgCoords = rsp.PAPER;
+    } else {
+      imgCoords = rsp.ROCK;
+    }
+    if (document.querySelector('#computer')) {
+      (document.querySelector('#computer') as HTMLDivElement).style.background = `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoords} 0`;
+    }
+    
+  }, 100);
+}
+
+intervalMaker(); // 함수 호출
+```
+
