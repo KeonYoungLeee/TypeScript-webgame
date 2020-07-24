@@ -2,6 +2,7 @@
 
   - [가위바위보 게임과 인터페이스](#가위바위보-게임과-인터페이스)
   - [인터페이스 특성과 type alias](#인터페이스-특성과-type-alias)
+  - [기본 d.ts 문제 해결하기](#기본-d.ts-문제-해결하기)
 
 
 
@@ -277,5 +278,75 @@ const example: Exapmle {
 
 ```
 > 왠만하면 이 방법을 사용하지 않지만 불가피한 상황에서 사용하면 된다.
+
+
+## 기본 d.ts 문제 해결하기
+[위로올라가기](#강좌2)
+
+#### 타입스크립트 범위
+find가 범위로 인해서 문제가 일어난다. 그래서 범위를 좁게 잡아줘야한다.
+
+#### 수정 전
+```js
+function computerChoice(imgCoords: RSP[keyof RSP] ) :keyof RSP {
+  return Object.keys(rsp).find((k) => rsp[k] === imgCoords);
+}
+```
+> 
+> `Property 'find' does not exist on type 'string[]'.ts(2339)` <br>
+>> find가 오류가 걸려있다. <br>
+
+
+#### 수정 후
+```js
+function computerChoice(imgCoords: RSP[keyof RSP] ) :keyof RSP {
+  return (Object.keys(rsp) as ['ROCK', 'SCISSORS', 'PAPER']).find((k) => rsp[k] === imgCoords);
+}
+```
+> **keys(o: object): string[];** <br>
+>> keys가 위와 같이 정의 되어져있다. string가 배열로 정의 되어져있다. <br>
+>> 그래서 ['ROCK', 'SCISSORS', 'PAPER']를 입력했다. <br>
+
+
+#### 수정 후의 또 다른 에러 원인
+```js
+function computerChoice(imgCoords: RSP[keyof RSP] ) :keyof RSP {
+  return (Object.keys(rsp) as ['ROCK', 'SCISSORS', 'PAPER']).find((k) => rsp[k] === imgCoords);
+}
+```
+> `Type '"ROCK" | "SCISSORS" | "PAPER" | undefined' is not assignable to type '"ROCK" | "SCISSORS" | "PAPER"'. `<br>
+> `Type 'undefined' is not assignable to type '"ROCK" | "SCISSORS" | "PAPER"'.ts(2322)` <br>
+
+#### 에러 원인 해결해주기 위한 tsconfig.json 수정
+> **find는 ES6에 추가되어서 tsconfig.json을 수정**해줘야한다.
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["ES5", "ES6", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ESNext", "DOM"]
+  },
+  "exclude": [".js"]
+}
+```
+
+#### tsconfig.json수정 후 에러 -> find의 속성보기 (find)
+```js
+function computerChoice(imgCoords: RSP[keyof RSP] ) :keyof RSP {
+  return (Object.keys(rsp) as ['ROCK', 'SCISSORS', 'PAPER']).find((k) => rsp[k] === imgCoords);
+}
+```
+> `find(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): T | undefined;` <br>
+>> 여기서 find를 보면 T 또는 undefined가 되어져있다. <br>
+
+#### 에러 해결 방안 ( !(느낌표) 붙이기)
+```js
+function computerChoice(imgCoords: RSP[keyof RSP] ) :keyof RSP {
+  return (Object.keys(rsp) as ['ROCK', 'SCISSORS', 'PAPER']).find((k) => rsp[k] === imgCoords)!;
+}
+
+```
+> **!(느낌표)**의 의미는 타입시스템에서 값이 없어서 경고하지만, <br>
+> 프로그래머인 내가 값이 있다고 보증하는 것이다. (프로그래머의 재량이다. 프로그래밍이 안 될 수가 있다.)<br>
+>> **undefined를 없애주기 위해서 !(느낌표)를 사용**하였다. 
 
 
