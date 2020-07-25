@@ -5,6 +5,7 @@
   - [기본 d.ts 문제 해결하기](#기본-d.ts-문제-해결하기)
   - [this와 타입 범위의 이해](#this와-타입-범위의-이해)
   - [가위바위보 완성하기](#가위바위보-완성하기)
+  - [총 정리와 질문](#총-정리와-질문)
 
 
 
@@ -543,4 +544,68 @@ function intervalMaker() {
 
 intervalMaker(); // 함수 호출
 ```
+
+## 총 정리와 질문
+[위로올라가기](#강좌3)
+
+
+1. 인터페이스 확장할 수 있다. <br>
+```js
+interface RSP {
+  // 내용물
+}
+
+interface Example extends RSP {
+
+}
+```
+2. 인터페이스를 따로 적어줘도 합쳐질 수가 있다. <br>
+> 이 장점으로 남의 라이브러리 확장 가능 <br>
+```js
+interface RSP {
+  // 내용물
+}
+
+interface RSP {
+  // 내용물 추가
+}
+```
+
+3. 값에 뭐가 들어올 지 모를 떄에는 추측을 할 수 있다. <br>
+```js
+interface RSP {
+  // c의 값이 뭐가 들어올 지 모르기 떄문에 string으로 추측
+  [c: string]: string; 
+}
+```
+
+5. type alias
+> union사용 할 때에는 Type alias를 사용 <br>
+> 객체 사용할 때에는 인터페이스 <br>
+```js
+type RSP = {
+  // 내용물
+}
+```
+
+6. keyof (중복제거 가능)
+```js
+let imgCoords: RSP[Keyof RSP] = '0'
+```
+
+7. 강제로 타입 캐스팅가능
+```js
+const myChoice = this.textContent as keyof RSP; 
+```
+
+8. 함수에서 this를 사용할 때에는 this를 첫번 쨰 매개변수에 사용
+```js
+ btn.addEventListener('click', function(this: HTMLButtonElement, e: Event) { // this
+   ...생략
+    const myChoice = this.textContent as keyof RSP; // this
+    ...생략
+ }
+```
+
+9. 타입스크립트에서 !(느낌표) 사용 -> 자주 사용하지 말기
 
