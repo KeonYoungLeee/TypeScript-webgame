@@ -1,3 +1,40 @@
+interface ICard {
+  att? : number;
+  hp? : number;
+}
+
+class Card implements ICard{
+  public att?: number;
+  public hp?: number;
+  protected cost?: number;
+  private mine?: boolean;
+  constructor(hero: boolean, mine: boolean) {
+    if (hero) {
+      return new Hero(mine);
+    } else {
+      this.att = Math.ceil(Math.random() * 5);
+      this.hp = Math.ceil(Math.random() * 5) + 25;
+      this.cost = Math.floor((this.att + this.hp) / 2);
+    }
+    if (mine) {
+      this.mine = true;
+    }
+    
+  }
+}
+
+class Hero extends Card {
+  private hero: boolean;
+  private field: boolean;
+  constructor(mine: boolean) {
+    super(true, mine);
+      this.att = Math.ceil(Math.random() * 2);
+      this.hp = Math.ceil(Math.random() * 5) + 25;
+      this.hero = mine;
+      this.field = true;
+  } 
+}
+
 interface Player {
   hero: HTMLDivElement,
   deck: HTMLDivElement,
@@ -10,11 +47,7 @@ interface Player {
   chosenCard?: Card[] | null
 }
 
-interface Card {
-  att: number,
-  hp: number,
-  cost: number,
-}
+
 
 const opponent : Player = {
   hero: document.getElementById('rival-hero') as HTMLDivElement,
