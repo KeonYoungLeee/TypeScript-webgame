@@ -2,6 +2,7 @@
 
   - [자스스톤 소개와 strictNullChecks](#자스스톤-소개와-strictNullChecks)
   - [Class 타이핑](#Class-타이핑)
+  - [제네릭 generic](#제네릭-generic)
 
 
 
@@ -363,4 +364,179 @@ class Card implements ICard{
 > 안 쓰는 인터페이스를 만드는 이유는? <br>
 >> public가 나오는 경우에 강제로 나오겠다는 것이다. <br>
 > class는 new로 통해서 공장처럼 만들어주는 것이다. <br>
+
+
+## 제네릭 generic
+[위로올라가기](#강좌4)
+
+여기서 게임설계 내용인데, <br>
+Card는 조상클래스 <br>
+Hero(영웅), Sub(부하카드)는 상속클래스로 만들 것이다. <br>
+
+```js
+interface Card {
+  att: number;
+  hp: number;
+  mine: boolean;
+  cost?: number;
+  field?: boolean;
+}
+
+class Hero implements Card {
+  public att: number;
+  public hp: number;
+  public mine: boolean;
+  public field: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 2);
+    this.hp = Math.ceil(Math.random() * 5) + 25;
+    this.mine = mine;
+    this.field = true;
+  }
+}
+
+class Sub implements Card {
+  public att: number;
+  public hp: number;
+  public field: boolean;
+  public cost: number;
+  public mine: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 5);
+    this.hp = Math.ceil(Math.random() * 5);
+    this.cost = Math.floor((this.att + this.hp) / 2);
+    this.mine = mine;
+    this.field = false;
+  }
+}
+```
+> 여기서 extends가 아니라 **implements**를 사용하는 이유는 ? <br>
+>> new Card를 사용하지 않기 때문이다. <br>
+>> **실제로 사용하면 class의 extends를 사용하고, 구현만 할려면 implements를 사용한다.** <br>
+> implements는 보통 객체에서 사용하는데, 객체 뿐만 아니라 다른데에도 사용한다. <br>
+
+#### implements를 함수일 경우
+```js
+// implements를 객체뿐만 아니라 함수에 사용할 때
+interface Example { // 모양, 형태는 함수이다
+  new (a: number, b: number): number
+}
+
+const ex: Example = (a, b) => a + b;
+```
+> 하지만, interface는 객체에서 많이 사용한다. 함수타입에 잘 사용하지 않는다. <br>
+
+#### implements를 객체일 경우
+```js
+// // implements를 객체일 경우
+const ex: Example = {
+  add: (a, b) => {
+    return a + b;
+  }
+}
+```
+
+### 제네릭(generic)
+
+#### 제네릭을 사용 전
+```js
+// 문자열을 더할 때에는 
+function add(a: string, b: string) {
+  return a + b; 
+}
+
+ // 숫자를 더할 때에는
+function add(a: number, b: number) {
+  return a + b; 
+}
+
+// 역으로, 숫자랑 문자열을 함께 더 하고 싶을 때에는 에러가 나온다.
+function add(a: number | string, b: number | string): string | number {
+  return a + b; 
+}
+// Operator '+' cannot be applied to types 'string | number' and 'string | number'.ts(2365)
+
+add(1, 'abc'); // 하지만 여기서는 에러가 안 나온다.
+add(1, 2); // 숫자끼리 더한다.
+add('abc', 'def'); // 문자끼리 더한다
+
+```
+> 숫자끼리 문자끼리 더하는 대신에 숫자, 문자같이 더하지않게 막아주는 장치가 필요하다. <br>
+> 하지만 위의 함수 선언으로 할 수가 없다. 그러기 위해서 **제너릭**이 있다. <br>
+
+#### 제네릭을 사용 후
+> T는 이름 마음대로 지어도 괜찮다. <br>
+> 임의의 T로 타입선언을 하는 것이다. <br>
+```js
+
+interface obj<T> {
+  add: (a: T, b: T) => T;
+}
+
+const a: obj<number> = {
+  add: (a, b) => a + b,
+}
+const b: obj<string> = {
+  add: (a, b) => a + b,
+}
+
+a.add(1, 2);
+a.add('1', '2'); // error
+b.add('1', '2');
+b.add(1, 2); // error
+
+// **********************************************************
+// **********************************************************
+
+interface obj {
+  add: (a: string| number, b: string | number) => string | number;
+}
+
+const a: obj<number> = {
+  add: (a, b) => a + b, // error
+}
+const b: obj<string> = {
+  add: (a, b) => a + b,  // error
+}
+
+a.add(1, 2);
+a.add('1', '2'); // no error
+b.add('1', '2');
+b.add(1, 2); // no error
+
+```
+> **단순 함수로서는 제네릭이 적용이 힘들어** <br>
+> **겍체의 메서드로 예제를 변경한다.** <br>
+> T라는 것을 제네릭을 하고 interface를 사용할 때 타입을 정한다. <br>
+>> 선언은 타입을 맞추면 되는 것이다. <br>
+
+#### <>를 좀 더 이해하기
+```js
+// 이런식으로도 사용할 수가 있다.
+document.addEventListener<'submit'>('submit', () => {
+
+});
+
+// addEventListener를 go to definition하면
+// lim.dom.d.ts에 보면 이하와 같이 선언되어 있다.
+addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+// 2개가 있다.
+
+// ***************************************************************************
+// ***************************************************************************
+
+addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+// k가 submit이 되는 것이다. ( <>에 있는 K )
+// extends는 나중에 알려준다. 일단 제한하는 것으로만 알아도 된다.
+
+// 여기서 <submit>을 사용 안해도 잘만 되는데??.
+// 그 이유 DocumentEventMap안에 있는 GlobalEventHandlersEventMap가 submit를 가지고 있기때문이다. 
+// 그래서 <submit>을 안해줘도 되는 것이다.
+
+
+// 만약 submit이 아니라 submitaaa가 들어오면 위에 없다는 것을 인식하고 밑에 선언 되어있는 addEventListener를 찾아본다. 
+addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+
+```
 
