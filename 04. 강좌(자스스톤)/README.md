@@ -3,7 +3,7 @@
   - [자스스톤 소개와 strictNullChecks](#자스스톤-소개와-strictNullChecks)
   - [Class 타이핑](#Class-타이핑)
   - [제네릭 generic](#제네릭-generic)
-
+  - [제네릭 extends, 타입 추론](#제네릭-extends,-타입-추론)
 
 
 
@@ -539,4 +539,66 @@ addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Doc
 addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
 
 ```
+
+## 제네릭 extends, 타입 추론
+[위로올라가기](#강좌4)
+
+위에 배웠던 내용에서 제네릭 extends에 대해서 알아보겠다.
+위에 언급했던 내용에서 K는 아무타입이 될수가 있다.
+
+```js
+
+interface obj<T> {
+  add: (a: T, b: T) => T;
+}
+
+const a: obj<number> = {
+  add: (a, b) => a + b,
+}
+const b: obj<string> = {
+  add: (a, b) => a + b,
+}
+const c: obj<boolean> = {
+
+}
+const d: obj<object> = {
+  
+}
+
+```
+> T를 제약하지 않아서, number, string, boolean, object등과 같이 아무거나 넣을 수가 있다.
+>> 하지만 제약을 걸고 싶을 때에는 **extends**를 사용한다.
+```js
+interface obj<T extends string> {
+  add: (a: T, b: T) => T;
+}
+
+const a: obj<number> = { // number error
+  add: (a, b) => a + b,
+}
+const b: obj<string> = {
+  add: (a, b) => a + b,
+}
+const c: obj<boolean> = { // boolean error
+
+}
+
+```
+> 제네릭에서는 extends란 ? **타입제한**이라고 보면 된다.
+
+#### 제네릭을 이용해서 함수 만들어보기
+```js
+
+
+function forEacth<T>(arr: T[]), callback: (item: T) => void): void { // arr에 무슨 배열이 될 지 몰라서 임의의 T를 사용했다
+  for (let i: number = 0; i < arr.length; i++) {
+    callback(arr[i]);
+  }
+}
+
+foreach<string>([], () => { }) // 배열에 문자열만 허용된다.
+foreach<number>([], () => { }) // 배열에 숫자만 허용된다.
+
+```
+> 타입 추론 되는거는 모두 제네릭으로 만들어져 있다.
 

@@ -3,6 +3,7 @@
   - [자스스톤 소개와 strictNullChecks](#자스스톤-소개와-strictNullChecks)
   - [Class 타이핑](#Class-타이핑)
   - [제네릭 generic](#제네릭-generic)
+  - [제네릭 extends, 타입 추론](#제네릭-extends,-타입-추론)
 
 
 
@@ -230,3 +231,8 @@ const me: Player = {
   chosenCardData: null,
 };
 ```
+
+## 제네릭 extends, 타입 추론
+[위로올라가기](#강좌4)
+
+코드 없음
