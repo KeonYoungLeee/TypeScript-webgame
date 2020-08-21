@@ -4,6 +4,7 @@
   - [Class 타이핑](#Class-타이핑)
   - [제네릭 generic](#제네릭-generic)
   - [제네릭 extends, 타입 추론](#제네릭-extends,-타입-추론)
+  - [자스스톤 만들며 복습하기](#자스스톤-만들며-복습하기)
 
 
 
@@ -602,3 +603,291 @@ foreach<number>([], () => { }) // 배열에 숫자만 허용된다.
 ```
 > 타입 추론 되는거는 모두 제네릭으로 만들어져 있다.
 
+## 자스스톤 만들며 복습하기
+[위로올라가기](#강좌4)
+
+#### jsStone.ts
+
+```js
+...생략
+
+// 턴 바꾸기
+const turnButton = document.getElementById('turn-btn') as HTMLButtonElement;
+let turn = true; // true면 내 턴, false면 상대 턴
+
+// 초기화
+function initate() {
+  [opponent, me].forEach((item) => {
+    item.deckData = [];
+    item.heroData = null;
+    item.fieldData = [];
+    item.chosenCard = null;
+    item.chosenCardData = null;
+  });
+
+
+  heroDeck();
+  heroDeck();
+  redrawScreen();
+  redrawScreen();
+}
+
+// 위 아래 차이는 코드를 처음 봤을 때 객체를 사용하면 알기 쉽고, 
+// 매개변수에 2개가 아니라 10개이면 각각의 뭐가 사용하되는지 알기 쉽기 때문에
+ 
+createDeck({ mine: false, count: 5});
+createDeck(false, 5);
+
+
+//createDeck에 선언은
+function createDeck({mine, count}: {mine: boolean, count: number}) {
+
+}
+```
+
+#### jsStone.ts
+```js
+... 생략
+
+function createHero({ mine }: {mine: boolean}) {
+  const player = mine ? me : opponent; // 나인지 상대인지 판별
+  player.heroData = new Hero(mine); // 영웅 정보 만들어주기
+  connectCardDom({ data: player.heroData, DOM: player.hero, hero: true});
+}
+
+interface A { // 이렇게 인터페이스로 별도로 만들어줘도 된다. 이름은 자기맘대로 설정
+  data: Card,
+  DOM: HTMLDivElement,
+  hero?: boolean,
+}
+
+function connectCardDom({ data, DOM, hero = false }: A ) {
+  
+}
+```
+
+#### jsStone.ts
+```js
+...생략
+
+const turnButton = document.getElementById('turn-btn') as HTMLButtonElement;
+let turn = true; 
+
+function initiate() {
+  [opponent, me].forEach((item) => {
+    item.deckData = [];
+    item.heroData = null;
+    item.fieldData = [];
+    item.chosenCard = null;
+    item.chosenCardData = null;
+  });
+  createDeck({ mine: false, count: 5 });
+  createDeck({ mine: true, count: 5 });
+  redrawScreen({ mine: true });
+  redrawScreen({ mine: false });
+}
+
+initiate();
+
+function createDeck({ mine, count }: {mine: boolean, count: number }) {
+
+}
+
+function createHero({ mine }: {mine: boolean}) {
+  const player = mine ? me : opponent;
+  player.heroData = new Hero(mine);
+  connectCardDom({ data: player.heroData, DOM: player.hero, hero: true});
+}
+
+interface A {
+  data: Card,
+  DOM: HTMLDivElement,
+  hero?: boolean,
+}
+
+function connectCardDom({ data, DOM, hero = false}: A) {
+  const cardEl = document.querySelector('.card-hidden .card')!.cloneNode(true) as HTMLDivElement;
+  cardEl.querySelector('.card-att')!.textContent = String(data.att); // querySelector를 사용하면 거의 형 변환은 화게 된다.
+  cardEl.querySelector('.card-hp')!.textContent = String(data.hp);
+  if (hero) {
+    (cardEl.querySelector('.card-const') as HTMLDivElement ).style.display = 'none';
+    const name = document.createElement('div');
+    name.textContent = '영웅';
+    cardEl.appendChild(name);
+  }
+  DOM.appendChild(cardEl);
+}
+
+function redrawScreen({ mine }: { mine: boolean }) {
+  const player = mine ? me : opponent;
+  redrawHero(player);
+}
+
+function redrawHero(target: Player) {
+  if (!target.heroData) {
+    throw new Error('heroData가 없습니다.')
+  }
+  target.hero.innerHTML = '';
+  connectCardDom({ data: target.heroData, DOM: target.hero, hero: true });
+}
+
+```
+
+#### jsStone.ts
+```js
+interface Card {
+  att: number;
+  hp: number;
+  mine: boolean;
+  cost?: number;
+  field?: boolean;
+}
+
+class Hero implements Card {
+  public att: number;
+  public hp: number;
+  public mine: boolean;
+  public field: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 2);
+    this.hp = Math.ceil(Math.random() * 5) + 25;
+    this.mine = mine;
+    this.field = true;
+  }
+}
+
+class Sub implements Card {
+  public att: number;
+  public hp: number;
+  public field: boolean;
+  public cost: number;
+  public mine: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 5);
+    this.hp = Math.ceil(Math.random() * 5);
+    this.cost = Math.floor((this.att + this.hp) / 2);
+    this.mine = mine;
+    this.field = false;
+  }
+}
+
+interface Player {
+  hero: HTMLDivElement,
+  deck: HTMLDivElement,
+  field: HTMLDivElement,
+  cost: HTMLDivElement,
+  deckData: Card[],
+  heroData?: Card | null,
+  fieldData: Card[], 
+  chosenCardData?: Card | null,
+  chosenCard?: Card[] | null
+}
+
+
+
+const opponent : Player = {
+  hero: document.getElementById('rival-hero') as HTMLDivElement,
+  deck: document.getElementById('rival-deck') as HTMLDivElement,
+  field: document.getElementById('rival-cards') as HTMLDivElement,
+  cost: document.getElementById('rival-cost') as HTMLDivElement,
+  deckData: [],
+  heroData: null,
+  fieldData: [],
+  chosenCard: null,
+  chosenCardData: null,
+};
+
+const me: Player = {
+  hero: document.getElementById('my-hero') as HTMLDivElement,
+  deck: document.getElementById('my-deck') as HTMLDivElement,
+  field: document.getElementById('my-cards') as HTMLDivElement,
+  cost: document.getElementById('my-cost') as HTMLDivElement,
+  deckData: [],
+  heroData: null,
+  fieldData: [],
+  chosenCard: null,
+  chosenCardData: null,
+};
+
+const turnButton = document.getElementById('turn-btn') as HTMLButtonElement;
+let turn = true; 
+
+function initiate() {
+  [opponent, me].forEach(function (item) {
+    item.deckData = [];
+    item.heroData = null;
+    item.fieldData = [];
+    item.chosenCard = null;
+    item.chosenCardData = null;
+  });
+  createDeck({ mine: false, count: 5 }); // 상대 덱 생성
+  createDeck({ mine: true, count: 5 }); // 내 덱 생성
+  createHero({ mine: false }); // 상대 영웅 그리기
+  createHero({ mine: true }); // 내 영웅 그리기
+  redrawScreen({ mine: false }); // 상대화면
+  redrawScreen({ mine: true }); // 내화면
+}
+
+initiate(); // 진입점
+
+function createDeck({ mine, count }: { mine: boolean; count: number }) { // 쫄병 생성
+  const player = mine ? me : opponent;
+  for (let i = 0; i < count; i++) {
+    player.deckData.push(new Sub(mine));
+  }
+  redrawDeck(player);
+}
+
+function createHero({ mine }: {mine: boolean}) {
+  const player = mine ? me : opponent;
+  player.heroData = new Hero(mine);
+  connectCardDom({ data: player.heroData, DOM: player.hero, hero: true});
+}
+
+interface A {
+  data: Card,
+  DOM: HTMLDivElement,
+  hero?: boolean,
+}
+
+function connectCardDom({ data, DOM, hero = false}: A) {
+  const cardEl = document.querySelector('.card-hidden .card')!.cloneNode(true) as HTMLDivElement;
+  cardEl.querySelector('.card-att')!.textContent = String(data.att); // querySelector를 사용하면 거의 형 변환은 화게 된다.
+  cardEl.querySelector('.card-hp')!.textContent = String(data.hp);
+  if (hero) {
+    (cardEl.querySelector('.card-const') as HTMLDivElement ).style.display = 'none';
+    const name = document.createElement('div');
+    name.textContent = '영웅';
+    cardEl.appendChild(name);
+  } else {
+    cardEl.querySelector('.card-cost')!.textContent = String(data.cost);
+  
+  }
+  DOM.appendChild(cardEl);
+}
+
+function redrawScreen({ mine }: { mine: boolean }) {
+  const player = mine ? me : opponent;
+  redrawHero(player);
+}
+
+function redrawHero(target: Player) {
+  if (!target.heroData) {
+    throw new Error('heroData가 없습니다.')
+  }
+  target.hero.innerHTML = '';
+  connectCardDom({ data: target.heroData, DOM: target.hero, hero: true });
+}
+
+function redrawDeck(target: Player) {
+  if (!target.heroData) {
+    throw new Error('heroData가 없습니다.')
+  }
+  target.deck.innerHTML = '';
+  target.deckData.forEach((data) => {
+    connectCardDom({ data, DOM: target.deck });
+  })
+}
+```
+
+> 실행하면 잘 못된 부분이 있을 것이다. 하지만 여기서는 타입스크립트 강좌라서 미구현상태이다.
