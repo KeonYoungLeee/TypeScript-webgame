@@ -896,3 +896,173 @@ function redrawDeck(target: Player) {
 ## 타입 가드
 [위로올라가기](#강좌4)
 
+#### 타입 가드를 이용한 카드 판별하기
+```js
+interface Card {
+  att: number;
+  hp: number;
+  mine: boolean;
+  cost?: number;
+  field?: boolean;
+}
+
+class Hero implements Card {
+  public att: number;
+  public hp: number;
+  public mine: boolean;
+  public field: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 2);
+    this.hp = Math.ceil(Math.random() * 5) + 25;
+    this.mine = mine;
+    this.field = true;
+  }
+}
+
+class Sub implements Card {
+  public att: number;
+  public hp: number;
+  public field: boolean;
+  public cost: number; // 쫄병에는 cost가 있다.
+  public mine: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 5);
+    this.hp = Math.ceil(Math.random() * 5);
+    this.cost = Math.floor((this.att + this.hp) / 2);
+    this.mine = mine;
+    this.field = false;
+  }
+}
+
+interface Player {
+  hero: HTMLDivElement,
+  deck: HTMLDivElement,
+  field: HTMLDivElement,
+  cost: HTMLDivElement,
+  deckData: Card[],
+  heroData?: Card | null,
+  fieldData: Card[], 
+  chosenCardData?: Card | null,
+  chosenCard?: Card[] | null
+}
+
+// 여기서 타입 가드를 사용하겠다.
+// 쫄병인지 아닌지 구별해준다.
+function isSub(data: Card): data is Sub {
+  // data is Sub의 의미는 data가 쫄병이라는 의미이다.
+  // 여기서 구별하는 방법은 쫄병에는 cost가 있다. cost로 구별할 것이다.
+  
+  // cost가 존재하면 true -> 즉, 쫄병이다.
+  if ( data.cost ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// Hero는 예시이다. 타입 카드 더 만들어도 괜찮다.
+function isHero(data: Card): data is Hero {
+  if ( data.hero) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+...생략
+...생략
+
+function connectCardDom({ data, DOM, hero = false}: A) {
+  const cardEl = document.querySelector('.card-hidden .card')!.cloneNode(true) as HTMLDivElement;
+  cardEl.querySelector('.card-att')!.textContent = String(data.att);
+  cardEl.querySelector('.card-hp')!.textContent = String(data.hp);
+  if (hero) {
+    (cardEl.querySelector('.card-const') as HTMLDivElement ).style.display = 'none';
+    const name = document.createElement('div');
+    name.textContent = '영웅';
+    cardEl.appendChild(name);
+  } else {
+    cardEl.querySelector('.card-cost')!.textContent = String(data.cost);
+  
+  }
+  cardEl.addEventListener('click', () => { // 카드 공격
+    if () { // 클릭할 때 쫄병일 경우
+
+    } else { // 클릭할 때 쫄병이 아닐 경우
+
+    }
+  });
+  // 여기서 타입 가드를 사용한다.
+  // Card에서 Hero인지 Sub인지를 확인한다.
+  DOM.appendChild(cardEl);
+}
+
+...생략
+```
+
+> 타입가드를 여러경우로 만들어 주는 것이 좋다.
+
+
+#### 
+```js
+
+...생략
+...생략
+
+function connectCardDom({ data, DOM, hero = false}: A) {
+  const cardEl = document.querySelector('.card-hidden .card')!.cloneNode(true) as HTMLDivElement;
+  cardEl.querySelector('.card-att')!.textContent = String(data.att);
+  cardEl.querySelector('.card-hp')!.textContent = String(data.hp);
+  if (hero) {
+    (cardEl.querySelector('.card-const') as HTMLDivElement ).style.display = 'none';
+    const name = document.createElement('div');
+    name.textContent = '영웅';
+    cardEl.appendChild(name);
+  } else {
+    cardEl.querySelector('.card-cost')!.textContent = String(data.cost);
+  
+  }
+  cardEl.addEventListener('click', () => {
+    if (isSub(data) && data.mine === true && !data.field ) { // 쫄병이 && 내 턴확인 && 한번 소환하는 애는 다시 소환못하게 확인 
+      if(!decktoFeild({ data })) { // 쫄병 하나 덱에서 뽑았으면,
+        createDeck({ mine: true, count: 1}); // 덱에 새로운 쫄병 하나 추가
+      }
+    } else {
+
+    }
+  });
+  DOM.appendChild(cardEl);
+}
+function decktoFeild({ data }: { data: Sub }): boolean {
+  const target = turn ? me : opponent;
+  const currentCost = Number(target.cost.textContent); // 쫄병 비용 계산을 하기 위해서 만들어주었다.
+  if ( currentCost < data.cost ) {
+    alert('코스트가 모자릅니다.');
+    return true
+  } 
+  data.field = true;
+  const idx = target.deckData.indexOf(data); // 덱 index를 알아주기
+  target.deckData.splice(idx, 1); // 덱을 하나 빼기
+  target.fieldData.push(data); // 뻈던 덱을 필드로 옮기는 작업
+  redrawDeck(target);
+  redrawField(target);
+  target.cost.textContent = String(currentCost - data.cost) // 썻던 코스트를 줄여준다.
+  return false;
+}
+
+...생략
+...생략
+
+function redrawField(target: Player) {
+  if (!target.heroData) {
+    throw new Error('heroData가 없습니다.')
+  }
+  target.field.innerHTML = '';
+  target.fieldData.forEach((data) => {
+    connectCardDom({ data, DOM: target.field });
+  })
+}
+```
+
+> 완성본은 제로토님의 깃허브에 있다.
+

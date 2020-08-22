@@ -46,6 +46,13 @@ interface Player {
   chosenCard?: Card[] | null
 }
 
+function isSub(data: Card): data is Sub {
+  if ( data.cost ) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 
 const opponent : Player = {
@@ -126,7 +133,32 @@ function connectCardDom({ data, DOM, hero = false}: A) {
     cardEl.querySelector('.card-cost')!.textContent = String(data.cost);
   
   }
+  cardEl.addEventListener('click', () => {
+    if (isSub(data) && data.mine === true && !data.field ) {
+      if(!decktoFeild({ data })) {
+        createDeck({ mine: true, count: 1});
+      }
+    } else {
+
+    }
+  });
   DOM.appendChild(cardEl);
+}
+function decktoFeild({ data }: { data: Sub }): boolean {
+  const target = turn ? me : opponent;
+  const currentCost = Number(target.cost.textContent);
+  if ( currentCost < data.cost ) {
+    alert('코스트가 모자릅니다.');
+    return true
+  } 
+  data.field = true;
+  const idx = target.deckData.indexOf(data);
+  target.deckData.splice(idx, 1);
+  target.fieldData.push(data);
+  redrawDeck(target);
+  redrawField(target);
+  target.cost.textContent = String(currentCost - data.cost)
+  return false;
 }
 
 function redrawScreen({ mine }: { mine: boolean }) {
@@ -149,5 +181,15 @@ function redrawDeck(target: Player) {
   target.deck.innerHTML = '';
   target.deckData.forEach((data) => {
     connectCardDom({ data, DOM: target.deck });
+  })
+}
+
+function redrawField(target: Player) {
+  if (!target.heroData) {
+    throw new Error('heroData가 없습니다.')
+  }
+  target.field.innerHTML = '';
+  target.fieldData.forEach((data) => {
+    connectCardDom({ data, DOM: target.field });
   })
 }
