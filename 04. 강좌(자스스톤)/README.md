@@ -6,6 +6,7 @@
   - [제네릭 extends, 타입 추론](#제네릭-extends,-타입-추론)
   - [자스스톤 만들며 복습하기](#자스스톤-만들며-복습하기)
   - [타입 가드](#타입-가드)
+  - [총 정리와 질문](#총-정리와-질분)
 
 
 
@@ -483,9 +484,9 @@ const b: obj<string> = {
 }
 
 a.add(1, 2);
-a.add('1', '2'); // error
+a.add(1, '2'); // error
 b.add('1', '2');
-b.add(1, 2); // error
+b.add(1, '2'); // error
 
 // **********************************************************
 // **********************************************************
@@ -545,8 +546,8 @@ addEventListener(type: string, listener: EventListenerOrEventListenerObject, opt
 ## 제네릭 extends, 타입 추론
 [위로올라가기](#강좌4)
 
-위에 배웠던 내용에서 제네릭 extends에 대해서 알아보겠다.
-위에 언급했던 내용에서 K는 아무타입이 될수가 있다.
+위에 배웠던 내용에서 제네릭 extends에 대해서 알아보겠다. <br>
+위에 언급했던 내용에서 K는 아무타입이 될수가 있다. <br>
 
 ```js
 
@@ -590,8 +591,6 @@ const c: obj<boolean> = { // boolean error
 
 #### 제네릭을 이용해서 함수 만들어보기
 ```js
-
-
 function forEacth<T>(arr: T[]), callback: (item: T) => void): void { // arr에 무슨 배열이 될 지 몰라서 임의의 T를 사용했다
   for (let i: number = 0; i < arr.length; i++) {
     callback(arr[i]);
@@ -1065,4 +1064,54 @@ function redrawField(target: Player) {
 ```
 
 > 완성본은 제로토님의 깃허브에 있다.
+
+## 총 정리와 질문
+[위로올라가기](#강좌4)
+
+### 인터페이스
+> 클래스, 함수로 인터페이스를 만들 수 있다. <br>
+> 개인적인 코딩 스타일인데 인터페이스는 주로 객체로 한다. <br>
+
+### 타입 가드 
+```js
+function isSub(data: Card): data is Sub { // 타입 가드 적용
+  if ( data.cost ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+```
+> 넓은 타입을 짧은 타입으로 좁혀 줄 수 있다. <br>
+>> isSub을 통과해서 타입범위를 줄여주는 것이다. <br>
+>> as를 사용하면 복잡하니까 타입가드를 사용하였다. <br>
+
+### 제네릭
+> 제네릭에 대한 제약 사항, 기본 값 <br>
+> 만들 때에는 여유롭게, 실제로 사용할 때에는 엄격하게 해준다. <br>
+```js
+// 제네릭으로 선언해준다.
+document.querySelector<HTMLDivElement>('.example').item(0); // 0가 HTMLDivElement로 된다.
+```
+
+```js
+interface obj<T> {
+  add: (a: T, b: T) => T;
+}
+
+const a: obj<number> = {
+  add: (a, b) => a + b,
+}
+const b: obj<string> = {
+  add: (a, b) => a + b,
+}
+
+a.add(1, 2);
+a.add(1, '2'); // error
+b.add('1', '2');
+b.add(1, '2'); // error
+```
+> 위의 소스코드는 인터페이스를 사용해서 고정시킬 때 <br> 
+> extends로 제약조건 걸기 <br>
+>> **함수의 Input/Output를 특정 타입으로 규정하고자 할 때 제네릭으로 만든다고 생각하면 된다.** <br>
 
