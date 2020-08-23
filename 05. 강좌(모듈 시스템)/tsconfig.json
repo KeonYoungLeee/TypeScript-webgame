@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": true, // ture라면 undefined랑 null을 구분한다.
+    "lib": ["ES5", "ES6", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ESNext", "DOM"]
+  },
+  "exclude": [".js"],
+  "include": ["jsStone.ts"],
+}
