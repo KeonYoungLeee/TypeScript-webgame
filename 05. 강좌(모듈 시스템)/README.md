@@ -1,6 +1,7 @@
 # 강좌5
 
   - [JS 모듈 시스템](#JS-모듈-시스템)
+  - [TS 모듈 시스템 주의사항](#TS-모듈-시스템-주의사항)
 
 
 
@@ -77,7 +78,7 @@ module.exports = function () {} // 위와 이것은 서로 다른 것이다.
 
 ### import에 *가 없는 경우
 ```js
-export default hello();
+export default hello(); // default가 있다.
 
 ```
 ```js
@@ -86,7 +87,7 @@ import hello from './module';
 
 ### import에 *가 있는 경우
 ```js
-module.exports = hello ();
+module.exports = hello();
 ```
 ```js
 import * from hi from './module';
@@ -94,4 +95,151 @@ import * from hi from './module';
 > 두개 다 신경쓰고 싶지않으면, tsconfig에서 **esModuleInterop: true**를 해준다. <br>
 > 하지만, 별로 추천을 안해주고 싶다. <br>
 
+
+## TS 모듈 시스템 주의사항
+[위로올라가기](#강좌5)
+
+TS 모듈을 실전에 적용해보겠다. <br>
+지난 시간에 했던 자스스톤 소스를 들고오겠다. <br>
+
+```js
+export interface Card {
+  att: number;
+  hp: number;
+  mine: boolean;
+  cost?: number;
+  field?: boolean;
+}
+
+export class Hero implements Card {
+  public att: number;
+  public hp: number;
+  public mine: boolean;
+  public field: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 2);
+    this.hp = Math.ceil(Math.random() * 5) + 25;
+    this.mine = mine;
+    this.field = true;
+  }
+}
+
+```
+> 파일 중에 import, export가 들어있으면 모듈이 된다. <br> 
+> 반대로 없으면, 스크립트가 된다. <br>
+
+#### types.ts
+```js
+export interface Card { // export 적용
+  att: number;
+  hp: number;
+  mine: boolean;
+  cost?: number;
+  field?: boolean;
+}
+export interface Player { // export 적용
+  hero: HTMLDivElement,
+  deck: HTMLDivElement,
+  field: HTMLDivElement,
+  cost: HTMLDivElement,
+  deckData: Card[],
+  heroData?: Card | null,
+  fieldData: Card[], 
+  chosenCardData?: Card | null,
+  chosenCard?: Card[] | null
+}
+
+export class Hero implements Card { // export 적용
+  public att: number;
+  public hp: number;
+  public mine: boolean;
+  public field: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 2);
+    this.hp = Math.ceil(Math.random() * 5) + 25;
+    this.mine = mine;
+    this.field = true;
+  }
+}
+
+export class Sub implements Card { // export 적용
+  public att: number;
+  public hp: number;
+  public field: boolean;
+  public cost: number;
+  public mine: boolean;
+  constructor(mine: boolean) {
+    this.att = Math.ceil(Math.random() * 5);
+    this.hp = Math.ceil(Math.random() * 5);
+    this.cost = Math.floor((this.att + this.hp) / 2);
+    this.mine = mine;
+    this.field = false;
+  }
+}
+```
+
+#### practice.ts
+```js
+import { Card, Player, Hero, Sub } from './types'; // 모듈을 불러올 수가 있다.
+
+function isSub(data: Card): data is Sub { // Sub는 types에 라는 모듈에서 들고온다.
+  if ( data.cost ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+const opponent : Player = {
+  hero: document.getElementById('rival-hero') as HTMLDivElement,
+  deck: document.getElementById('rival-deck') as HTMLDivElement,
+  field: document.getElementById('rival-cards') as HTMLDivElement,
+  cost: document.getElementById('rival-cost') as HTMLDivElement,
+  deckData: [],
+  heroData: null,
+  fieldData: [],
+  chosenCard: null,
+  chosenCardData: null,
+};
+
+const me: Player = {
+  hero: document.getElementById('my-hero') as HTMLDivElement,
+  deck: document.getElementById('my-deck') as HTMLDivElement,
+  field: document.getElementById('my-cards') as HTMLDivElement,
+  cost: document.getElementById('my-cost') as HTMLDivElement,
+  deckData: [],
+  heroData: null,
+  fieldData: [],
+  chosenCard: null,
+  chosenCardData: null,
+};
+
+...생략
+...생략
+
+```
+
+> 주의할 점이 common.js, es2015가 다르다는 것이다. <br>
+> 몇 가지 주의할 사항이 있다. namespace, common를 위한 import다. <br>
+
+**common.ts, common.d.ts**를 파일을 생성한다.
+#### common.d.ts
+```js
+// common.d.ts.는 `export =` 라고 적힌다.
+declare function a() {}
+export = a;
+// export default a; // 이렇게 적지 않는다.
+```
+> **d.ts는 보통 내 프로젝트가 라이브러리일 때 사용한다.** <br>
+> `export = a`라고 있는데 import는 어떻게 할까? <br>
+```js
+import a = require('./common'); // d.ts를 imporot 하는 방법
+// 하지만 require하는 방법은 잘 못봤는데? 이하와 같이 해줘도 상관없다.
+import * as A from './common'; // * as로 대신 사용할 수 가 있다.
+
+```
+> <strong>*</strong>가 거기에 해당하는 모든 것을 가져온다는 의미이다. 그 해당하는 모듈을 A라는 곳에 다 담아온다. <br>
+> `import a = require('./common');`랑 `import * as A from './common';`의 의미는 같다. <br>
+>> common.js 모듈을 다룰 때에는 항상 `* as`가 원칙이다. <br>
 
