@@ -2,6 +2,7 @@
 
   - [JS 모듈 시스템](#JS-모듈-시스템)
   - [TS 모듈 시스템 주의사항](#TS-모듈-시스템-주의사항)
+  - [남의 패키지 사용하기(Redux, Axios)](#남의-패키지-사용하기(Redux,-Axios))
 
 
 
@@ -242,4 +243,30 @@ import * as A from './common'; // * as로 대신 사용할 수 가 있다.
 > <strong>*</strong>가 거기에 해당하는 모든 것을 가져온다는 의미이다. 그 해당하는 모듈을 A라는 곳에 다 담아온다. <br>
 > `import a = require('./common');`랑 `import * as A from './common';`의 의미는 같다. <br>
 >> common.js 모듈을 다룰 때에는 항상 `* as`가 원칙이다. <br>
+
+## 남의 패키지 사용하기(Redux, Axios)
+[위로올라가기](#강좌5)
+
+남의 라이브러리 중점적으로 보겠다. 
+예로들어서 Redux에 간다. typescript가 거의 대부분(80%)구성으로 되어있다. <br>
+
+**declare**는 타입이 없는 것을 새로 타입을 선언할 떄 사용한다. <br> 
+redux의 패키지를 보면 `export default`가 없다. <br>
+```js
+export default // default가 없다
+import { combineReducers } from 'redux'; // 객체형식, 즉 구조분해 형식으로 파일을 가져온다.
+```
+
+d.ts에 보면 `/// <reference types="sybol-observable" />`가 있다. <br>
+> 의미는 sybol-observable의 타입을 참조하고 있는 것이다. <br>
+> 다른 패키지에 있는 타입을 참조하고 있다. <br>
+> 직접 코딩에는 사용하지 않지만, d.ts파일을 분석할 때 사용한다. <br><br>
+
+axios라이브러리를 보면 자바스크립트 90퍼 이상을 차지하고 있고, 타입스크립트 4.5퍼 들어가있다. <br>
+> 타입스크립트가 들어 있으면 가장 확인 해봐야할 것이 **d.ts**파일이다. <br>
+> axios도보면 d.ts파일이 들어있다. <br>
+>> 결국에는, d.ts파일이 없으면, 내가 직접 필요한 것을 만들어줘야한다. <br>
+
+
+
 
