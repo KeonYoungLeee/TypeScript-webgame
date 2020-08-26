@@ -5,6 +5,7 @@
   - [남의 패키지 사용하기(Redux, Axios)](#남의-패키지-사용하기(Redux,-Axios))
   - [Definitely Typed](#Definitely-Typed)
   - [커스텀 패키지 타이핑](#커스텀-패키지-타이핑)
+  - [타이핑이 틀렸을 때 및 총 정리](#타이핑이-틀렸을-때-및-총-정리)
 
 
 
@@ -250,6 +251,9 @@ import * as A from './common'; // * as로 대신 사용할 수 가 있다.
 [위로올라가기](#강좌5)
 
 남의 라이브러리 중점적으로 보겠다. <br>
+
+1. ***타입스크립트 만들어진 패키지 (예시:redux)*** <br>
+
 예로들어서 Redux에 간다. typescript가 거의 대부분(80%)구성으로 되어있다. <br>
 
 **declare**는 타입이 없는 것을 새로 타입을 선언할 떄 사용한다. <br> 
@@ -262,7 +266,10 @@ import { combineReducers } from 'redux'; // 객체형식, 즉 구조분해 형�
 d.ts에 보면 `/// <reference types="sybol-observable" />`가 있다. <br>
 > 의미는 sybol-observable의 타입을 참조하고 있는 것이다. <br>
 > 다른 패키지에 있는 타입을 참조하고 있다. <br>
-> 직접 코딩에는 사용하지 않지만, d.ts파일을 분석할 때 사용한다. <br><br>
+> 직접 코딩에는 사용하지 않지만, d.ts파일을 분석할 때 사용한다. <br>
+
+1. 타입스크립트 만들어진 패키지 (예시:redux) <br>
+2. ***js로 만들어졌지만, index.d.ts가 있는거.(예시:axios)*** <br>
 
 axios라이브러리를 보면 자바스크립트 90퍼 이상을 차지하고 있고, 타입스크립트 4.5퍼 들어가있다. <br>
 > 타입스크립트가 들어 있으면 가장 확인 해봐야할 것이 **d.ts**파일이다. <br>
@@ -273,6 +280,10 @@ axios라이브러리를 보면 자바스크립트 90퍼 이상을 차지하고 �
 
 ## Definitely Typed
 [위로올라가기](#강좌5)
+
+1. 타입스크립트 만들어진 패키지 (예시:redux) <br>
+2. js로 만들어졌지만, index.d.ts가 있는거.(예시:axios) <br>
+3. ***Definitely Typed에 있는 유형*** <br>
 
 다음 라이브러리는 React를 볼 것이다. <br>
 React를 보면, index.d.ts파일이 없다. <br>
@@ -302,10 +313,10 @@ Definitely Typed에는 jQuery, React 다양한 라이브러리 있다는 것을 
 ## 커스텀 패키지 타이핑
 [위로올라가기](#강좌5)
 
-1. 타입스크립트 만들어진 패키지 (redux와 같은 것) <br>
-2. js로 만들어졌지만, index.d.ts가 있는거. <br>
-3. Definitely Typed에 있는 유형 - 지난 시간은 여기까지 했다. <br>
-4. Definitely Typed에 없는 유형 - 이번 시간에 한다. <br>
+1. 타입스크립트 만들어진 패키지 (예시:redux) <br>
+2. js로 만들어졌지만, index.d.ts가 있는거.(예시:axios) <br>
+3. Definitely Typed에 있는 유형 <br>
+4. ***Definitely Typed에 없는 유형*** <br>
 > Definitely Typed에 없는 유형은 별로 안 유명해서 아직 안 만들어 놓았다. <br>
 
 4번의 예시로 `npm i @types/can-use-dom`을 해보면, 콘솔 창에 **Not Found**가 나온다. <br>
@@ -401,5 +412,51 @@ const error = new Error('');
 error.code;
 ```
 
+## 타이핑이 틀렸을 때 및 총 정리
+[위로올라가기](#강좌5)
 
+1. 타입스크립트 만들어진 패키지 (예시:redux) <br>
+2. js로 만들어졌지만, index.d.ts가 있는거.(예시:axios) <br>
+3. Definitely Typed에 있는 유형 <br>
+4. Definitely Typed에 없는 유형 <br>
+5. ***타이핑이 틀린 경우(최악의 경우)*** <br>
+  
+> 예로들어서, `npm i @types/connect-flash, npm i connect-flash`를 사용하겠다는 과정을 해보겠다. <br>
+> 5번은 최악의 경우이다. 잘못된 거는 `@types/connect-flash`를 삭제하고, 직접 코드를 짠다. <br>
+> 삭제하는 벙법 : `npm rm @types/connect-flash` <br>
+
+
+잘못된게 있으면 기여를 해보는게 좋다. (하지만 까다롭다....) -> Definitely Typed의 깃허브 사이트에 기여하면 된다. <br>
+
+### 복습
+> **declare** : 타입이 없는 것를 선언을 해주는 것이다. <br>
+>> `declare glabal`은 global을 선언하는 것이고, `declare module "can-use-dom"`는 모듈하는 것은 ambient module이다. <br>
+>> d.ts파일은 declare을 선언을 해주고 시작해야한다. <br>
+
+> **`/// <reference types="sybol-observable" />`** <br>
+>> 다른 d.ts를 참조할 때 사용한다. <br>
+
+사이트 : https://github.com/DefinitelyTyped/DefinitelyTyped <br><br>
+
+
+### d.ts파일 만드는 유형(프로그래밍이 아니라 라이브러리 만들 때)
+
+#### tsconfig.json
+```js
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": true,
+    "lib": ["ES5", "ES6", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ESNext", "DOM"],
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "declaration": true,
+    "declarationDir": "./" // 경로에 설정해준다. (현재폴더 설정(참고로, 폴더를 만들어줘서 다른 쪽에 경로를 설정해줘도 상관없다.))
+  },
+  "exclude": [".js", "./types"]
+}
+```
+<pre><code>npx tsc</code></pre>
+npx tsc로 실행
+
+> 에러가 나오면 에러를 다 수정해줘야한다. <br>
 

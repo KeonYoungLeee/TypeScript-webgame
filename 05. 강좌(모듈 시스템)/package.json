@@ -9,7 +9,9 @@
   "author": "LEEKY",
   "license": "MIT",
   "dependencies": {
+    "@types/connect-flash": "0.0.35",
     "can-use-dom": "^0.1.0",
+    "connect-flash": "^0.1.1",
     "typescript": "^3.9.7"
   }
 }
