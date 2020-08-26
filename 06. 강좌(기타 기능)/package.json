@@ -1,0 +1,16 @@
+{
+  "name": "leture06",
+  "version": "1.0.0",
+  "description": "타입스크립트 공부",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "LEEKY",
+  "license": "MIT",
+  "dependencies": {
+    "@types/connect-flash": "0.0.35",
+    "connect-flash": "^0.1.1",
+    "typescript": "^3.9.7"
+  }
+}
