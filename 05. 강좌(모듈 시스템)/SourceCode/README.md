@@ -3,6 +3,7 @@
   - [JS 모듈 시스템](#JS-모듈-시스템)
   - [TS 모듈 시스템 주의사항](#TS-모듈-시스템-주의사항)
   - [남의 패키지 사용하기(Redux, Axios)](#남의-패키지-사용하기(Redux,-Axios))
+  - [Definitely Typed](#Definitely-Typed)
 
 
 
@@ -223,3 +224,7 @@ function redrawField(target: Player) {
 
 소스코드 없음
 
+## Definitely Typed
+[위로올라가기](#강좌5)
+
+소스코드 없음

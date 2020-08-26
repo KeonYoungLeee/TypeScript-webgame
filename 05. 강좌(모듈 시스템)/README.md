@@ -3,6 +3,7 @@
   - [JS 모듈 시스템](#JS-모듈-시스템)
   - [TS 모듈 시스템 주의사항](#TS-모듈-시스템-주의사항)
   - [남의 패키지 사용하기(Redux, Axios)](#남의-패키지-사용하기(Redux,-Axios))
+  - [Definitely Typed](#Definitely-Typed)
 
 
 
@@ -247,7 +248,7 @@ import * as A from './common'; // * as로 대신 사용할 수 가 있다.
 ## 남의 패키지 사용하기(Redux, Axios)
 [위로올라가기](#강좌5)
 
-남의 라이브러리 중점적으로 보겠다. 
+남의 라이브러리 중점적으로 보겠다. <br>
 예로들어서 Redux에 간다. typescript가 거의 대부분(80%)구성으로 되어있다. <br>
 
 **declare**는 타입이 없는 것을 새로 타입을 선언할 떄 사용한다. <br> 
@@ -269,4 +270,30 @@ axios라이브러리를 보면 자바스크립트 90퍼 이상을 차지하고 �
 
 
 
+## Definitely Typed
+[위로올라가기](#강좌5)
+
+다음 라이브러리는 React를 볼 것이다. <br>
+React를 보면, index.d.ts파일이 없다. <br>
+다른 라이브러리 jQuery도 보면, index.d.ts.파일이 없다. <br>
+> 그러면, 타입선언이 안되어있어서 불안하지 않나? <br>
+>> 프로그래밍은 개인 혼자서 만든 것이 아니라, 수 백명 이상이 만들어서 남이 만들어놓은 그 중하나가 **Definitely Typed**라는 것이다. <br>
+>> **Definitely Typed안에 엄청 많은 타입들이 많고, index.d.ts가 정의 되어어져있다.** <br>
+
+Definitely Typed에는 jQuery, React 다양한 라이브러리 있다는 것을 확인할 수 있다. <br>
+하지만, 다른 라이브러리 대표적으로 vue같은 경우에는 vue자체에서 타입을 지원한다. <br>
+타입스크립트를 지원하면 Definitely Typed에 라이브러리가 들어있지 않는다. <br>
+
+### @types의 의미 
+<pre><code>npm i @types/jquery</code></pre>
+
+> 위와 같이 설치를 한다면, jquery와 @types/jquery가 함께 설치가 된다. <br>
+> **@types/jquery의미는 Definitely Typed에 있는 라이브러리(jquery 등)를 참조한다.** <br>
+> 자체적으로 types을 지원하지 않는다면, `@types/`를 해주는 것이 좋다. <br>
+> 그러면 `node_modules`에 파일을 보면 `types`파일이 생긴다. <br>
+>> 즉, Definitely Typed를 사용할 때에는 `@types/라이브러리명` 해주는 것이 좋다 <br><br>
+
+### namespace
+`React.componet, React.selct` 와 같이 사용할 수 있는 이유는 <br>
+> React에 **namespace**가 정의되어져 있기 때문에 사용할 수가 있다. <br>
 
