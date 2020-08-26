@@ -1,4 +1,11 @@
 import { Card, Player, Hero, Sub } from './types';
+import * as  candusedom from 'can-use-dom';
+
+window.hello = 'a';
+const error = new Error('');
+error.code;
+
+
 
 function isSub(data: Card): data is Sub {
   if ( data.cost ) {

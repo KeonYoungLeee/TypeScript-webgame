@@ -4,6 +4,7 @@
   - [TS 모듈 시스템 주의사항](#TS-모듈-시스템-주의사항)
   - [남의 패키지 사용하기(Redux, Axios)](#남의-패키지-사용하기(Redux,-Axios))
   - [Definitely Typed](#Definitely-Typed)
+  - [커스텀 패키지 타이핑](#커스텀-패키지-타이핑)
 
 
 
@@ -228,3 +229,55 @@ function redrawField(target: Player) {
 [위로올라가기](#강좌5)
 
 소스코드 없음
+
+## 커스텀 패키지 타이핑
+[위로올라가기](#강좌5)
+
+#### \types\cas-use-dom.d.ts
+```js
+declare module "can-use-dom" {
+  const canUseDom: boolean;
+  export default canUseDom;
+}
+```
+
+
+#### \types\index.d.ts
+```js
+export {}
+
+declare global {
+  export interface Window {
+    hello: string,
+  }
+  interface Error {
+    code?: any;
+  }
+}
+```
+
+#### \tsconfig.json
+```js
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": true,
+    "lib": ["ES5", "ES6", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ESNext", "DOM"],
+    "typeRoots": ["./types", "./node_modules/@types"]
+  },
+  "exclude": [".js"]
+}
+```
+
+
+#### \practice.ts
+```js
+import { Card, Player, Hero, Sub } from './types';
+import * as  candusedom from 'can-use-dom';
+
+window.hello = 'a';
+const error = new Error('');
+error.code;
+
+```
+

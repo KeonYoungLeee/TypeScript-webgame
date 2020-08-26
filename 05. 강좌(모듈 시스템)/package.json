@@ -9,6 +9,7 @@
   "author": "LEEKY",
   "license": "MIT",
   "dependencies": {
+    "can-use-dom": "^0.1.0",
     "typescript": "^3.9.7"
   }
 }

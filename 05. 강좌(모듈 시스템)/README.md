@@ -4,6 +4,7 @@
   - [TS 모듈 시스템 주의사항](#TS-모듈-시스템-주의사항)
   - [남의 패키지 사용하기(Redux, Axios)](#남의-패키지-사용하기(Redux,-Axios))
   - [Definitely Typed](#Definitely-Typed)
+  - [커스텀 패키지 타이핑](#커스텀-패키지-타이핑)
 
 
 
@@ -296,4 +297,109 @@ Definitely Typed에는 jQuery, React 다양한 라이브러리 있다는 것을 
 ### namespace
 `React.componet, React.selct` 와 같이 사용할 수 있는 이유는 <br>
 > React에 **namespace**가 정의되어져 있기 때문에 사용할 수가 있다. <br>
+
+
+## 커스텀 패키지 타이핑
+[위로올라가기](#강좌5)
+
+1. 타입스크립트 만들어진 패키지 (redux와 같은 것) <br>
+2. js로 만들어졌지만, index.d.ts가 있는거. <br>
+3. Definitely Typed에 있는 유형 - 지난 시간은 여기까지 했다. <br>
+4. Definitely Typed에 없는 유형 - 이번 시간에 한다. <br>
+> Definitely Typed에 없는 유형은 별로 안 유명해서 아직 안 만들어 놓았다. <br>
+
+4번의 예시로 `npm i @types/can-use-dom`을 해보면, 콘솔 창에 **Not Found**가 나온다. <br>
+그리고, `npm i can-use-dom`을 해보겠다. <br>
+
+```js
+import * as  candusedom from 'can-use-dom';
+// Try `npm install @types/can-use-dom` if it exists or add a new declaration (.d.ts) file containing `declare module 'can-use-dom';`ts(7016)
+```
+위와 같이 에러가 나온다. <br>
+에러 해결방법은 직접 타이핑을 해줘야한다. 직접 타이핑은 간단한 거면 괜찮고, 쓸 부분만 타이핑을 해주면 된다. <br>
+
+### 타이핑 하는 방법
+types라는 폴더를 만들고, 하부 파일(cas-use-dom.d.ts)를 생성해준다. (여기서부터 내가 만든 타입들은 type폴더 안에 관리를 할 것이다.) <br>
+
+#### tsconfig.json (셋팅)
+```js
+{
+  "compilerOptions": {
+    "strict": true, 
+    "strictNullChecks": true,
+    "lib": ["ES5", "ES6", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ESNext", "DOM"],
+    "typeRoots": ["./types", "./node_modules/@types"]
+  },
+  "exclude": [".js"],
+  // "include": ["practice.ts"], // include 삭제해준다.
+```
+> 먼저 tsconfig를 셋팅을한다. 그러고 나서, **typeRoots**에다가 타입핑 해 줄 **폴더명(마음대로 지어도 상관없음)**을 입력해준다. <br>
+> typeRoots에 기본적으로 **`./node_modules/@types`**을 넣어줘야한다. <br>
+>> 조심해야 할 것이 indclude를 넣어주면 types폴더를 인식을 못하기 떄문에 **include를 삭제**해준다. <br>
+
+#### \types\cas-use-dom.d.ts ( 모듈 선언)
+```js
+// 일단 예시로 만드는 것이다.
+declare module "can-use-dom" { // from 부분 - from부분이 import의 from부분이랑 일치 해야한다.
+  const canUseDom: boolean;
+  export default canUseDom;
+}
+```
+> 파일명은 중요하지 않다. `declare module "can-use-dom"` 선언해주는 부분이 중요하다.
+
+#### practice.ts ( import, 전역객체 )
+```js
+import * as  candusedom from 'can-use-dom'; // candusedom을 사용할 수 있다.
+
+// **********************************************
+
+// 이번에는 window에다가 추가를 할 것이다. (전역객체 사용)
+window.hello = "hello" // 이것을 사용할 것이다.
+```
+
+#### types\index.d.ts
+```js
+declare global { 
+  // global에서 이와 같이 에러가 나온다.
+  // Augmentations for the global scope can only be directly nested in external modules or ambient module declarations.ts(2669)
+  // 외부 모듈을 해줘야한다.
+  export interface window {
+    hello: string,
+  }
+  interface Error {
+    code?: any;
+  }
+}
+```
+> `Augmentations for the global scope can only be directly nested in external modules or ambient module declarations.ts(2669)`와 같은 에러 발생한다. <br>
+
+### 참고사항 (internal modules, external modules, ambient module)
+> **internal modules** -> 내부 모듈(namespace)라고 생각하면 된다. <br>
+> **external modules** -> 외부 모듈(export, import)라고 생각하면 된다. <br>
+> **ambient module** -> d.ts에서 declare module 사용하는 것이다. <br>
+
+#### types\index.d.ts
+```js
+export {} // 이런식으로 해서 꼼수를 부려줬다.
+
+declare global {
+  interface Window {
+    hello: string,
+  }
+  interface Error {
+    code?: any;
+  }
+}
+```
+> export를 해주는 이유는 타입스크립트의 규칙이기 때문이다. <br>
+
+#### practice.ts (index.d.ts에서 hello, code를 사용)
+```js
+// 이하와 같이 전역객체 사용
+window.hello = 'a'; // 전역객체가 사용될 수 있다. 
+const error = new Error(''); 
+error.code;
+```
+
+
 
