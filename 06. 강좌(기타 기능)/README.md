@@ -1,6 +1,7 @@
 # 강좌6
 
   - [intersection & call, apply](#intersection-&-call,-apply)
+  - [TS 유틸리티](#TS-유틸리티)
 
 
 
@@ -101,4 +102,60 @@ call<T, A extends any[], R>(this: (this: T, ...args: A) => R, thisArg: T, ...arg
 > `thisArg`: [1, 2, 3]의 배열 <br>
 > ``...args: A`는 `(item) => {  return item.toFixed(1); }`` <br>
 > `(this: T, ...args: A) => R`는 `map`을 뜻하는 것이다. <br>
+
+
+## TS 유틸리티
+[위로올라가기](#강좌6)
+
+사이트 : https://typescript-kr.github.io/pages/utility-types.html (한글번역) <br>
+
+
+> `Partial<T>, Readonly<T>, Pick<T,K>, Omit<T,K>, Exclude<T,U>, Extract<T,U>, ReturnType<T>, Required<T>, OmitThisParameter ThisType<T>` <br>
+> 특히 많이 사용되는 것이다. <br>
+
+> TS 유틸리티가 있는 이유는 타입핑할 때 편해진다. <br>
+
+### Partial
+Partial는 일부분만 바꿔 줄 수 있게 해준다. <br>
+```js
+interface A {
+  a: 'b',
+  c: true,
+  d: 123, 
+}
+
+const a: A {
+  a: 'b',
+  c: true,
+  d: 123, 
+}
+
+const b: Partial<A> = {
+  c: true,
+  d: 123, 
+} // -> 원래 a가 없으면 에러가 나는데, a가 없어도 에러가 안 나온다. 
+```
+
+### Readonly
+```js
+interface A {
+  a: 'b',
+  c: true,
+  d: 123, 
+}
+
+const a: A {
+  a: 'b',
+  c: true,
+  d: 123, 
+}
+
+const b: Readonly<A> = {
+  c: true,
+  d: 123, 
+} 
+```
+> 간단하게 설명하자면, b가 전부 Readonly 된다. <br>
+> TS 유틸리티에 다양한 기능이 있으니까, 나중에 사용하면 된다. <br>
+>> TS 유틸리티를 잘 활용하면 중복되는 인터페이서, 타이핑을 막을 수 있게 된다. <br>
 
