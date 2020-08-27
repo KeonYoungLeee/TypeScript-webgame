@@ -3,6 +3,7 @@
   - [intersection & call, apply](#intersection-&-call,-apply)
   - [TS 유틸리티](#TS-유틸리티)
   - [테코레이터](#테코레이터)
+  - [질문 및 정리](#질문-및-정리)
 
 
 
@@ -57,3 +58,8 @@ class Person2 {
   }
 }
 ```
+
+## 질문 및 정리
+[위로올라가기](#강좌6)
+
+코드 없음

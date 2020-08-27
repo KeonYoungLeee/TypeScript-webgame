@@ -3,6 +3,7 @@
   - [intersection & call, apply](#intersection-&-call,-apply)
   - [TS 유틸리티](#TS-유틸리티)
   - [테코레이터](#테코레이터)
+  - [질문 및 정리](#질문-및-정리)
 
 
 
@@ -166,6 +167,7 @@ const b: Readonly<A> = {
 **데코레이터**는 영어로 장식하다의미이다. <br>
 데코레이터는 클래스의 property, method등을 장식할 수 있다. <br>
 
+#### 클래스 선언
 ```js
 class Person {
   title: string;
@@ -185,6 +187,7 @@ class Person {
 > 기능을 왜 굳이 데코레이터로 수정을 하는가? 직접 코드를 수정하는게 낫지않을까?  \<br>
 >> 이것도 중복을 막기위해서 데코레이터를 사용하는 것이다. <br>
 
+#### 데코레이터 선언
 ```js
 // 함수선언
 function makeGender(target: typeof Person) { // Person의 대한 타입을 타겟 지정한다.
@@ -247,6 +250,7 @@ class Person2 {
 }
 ```
 
+#### 데코레이터 설명
 ```js
 function makeGender(target: typeof Person) {
   return class extends target {
@@ -297,13 +301,15 @@ class Person2 {
 ```
 > ***데코레이터 자체가는 TS가 아니라 JS 개념이다.*** <br>
 
-
+### 함수형 데코레이터 (세 번쨰 인수는 특별하다)
 ```js
 ...생략
 
 function readonly(target: any, key: any, descriptor: PropertyDescriptor) { 
   console.log(target, key, descriptor);
   descriptor.writable = false;
+  descriptor.configurable = false; 
+  descriptor.enumerable = false;
 }
 
 @makeGender 
@@ -329,4 +335,53 @@ const Lee = new Persion('Lee');
 > 데코레이터 만들어 주었는데 readonly데코레이터를 보면 **매겨변수가 3개**가 있다. <br>
 > **첫 번째 매겨변수는 target, 두 번쨰 매개변수는 key, 세번 쨰 매개변수는 descriptor** <br>
 >> descriptor에서는 ***`writable: 수정 가능 여부, configurable: 설정 가능 여부, enumerable: 반복 가능 여부`***가 있다. <br>
+
+## 질문 및 정리
+[위로올라가기](#강좌6)
+
+
+타입스크립를 사용하면 퍼포먼스에서도 향상이 가능할까? <br>
+> 성능 향상에는 거의 없다. 타입스크립트에서는 타입이 명확해지기떄문에, 어이없는 실수를 막아준다. <br>
+> 자바스크립트 에러 순위를 보면, 어이없는 실수가 많다. 그것을 타입스크립트가 막아준다. <br>
+> 대신에, 코드가 길어지고, 제네릭을 사용해지면 가독성이 떨어질 떄가 있다. <br>
+> 또한, 빌드 시간이 오래걸린다. 실행시간은 차이가 없다. <br>
+
+#### 파리미터 데코레이터 (세 번쨰 인수는 index)
+```js
+...생략
+function readonlyProperty(target: any, key: any, index: number) { // 세번 쨰인수는 index
+  console.log(target, key, index);
+}
+
+function readonly(target: any, key: any, descriptor: PropertyDescriptor) { 
+  console.log(target, key, descriptor);
+  descriptor.writable = false;
+}
+
+@makeGender 
+class Person2 {
+  @validate title: string; 
+  age = 27;
+  constructor() {
+    this.title = name;
+  }
+  setTitle(@readonlyProperty title: string) { // 파라미터 데코레이터
+    this.title = title;
+  }
+  @readonly 
+  sayTitle(): any {
+    return this.title;
+  }
+}
+
+const Lee = new Persion('Lee');
+```
+> 파라미터 데코레이터는 세번 쨰 인수가 descriptor가 아닌 index이다. <br>
+> 데코레이터를 잘 사용하기 위해서는 `reflect-metadata`, `proxy`를 사용하는 것이 좋다. <br>
+> `reflect-metadata`, `proxy` 나중에 사용할 때 자기 스스로 공부해보기 <br>
+
+> 데코레이터는 클래스, 프로퍼티, 메소드, 파라미터를 꾸며준다. <br> 
+>> 꾸며주다 의미는 기능을 추가 수정을 하는 것이다. <br>
+>> 장점은 중복을 줄여주는 역할을 할 수가 있다. 같은 역할은 데코레이터에 작성해주는 것이 좋다. <br>
+>> 즉, 자바스크립트에서 코딩(클래스형 프로그래밍)을 할 떄 데코레이터로 사용해서 중복을 제거할 수 있다. <br>
 

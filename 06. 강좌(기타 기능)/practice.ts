@@ -19,16 +19,27 @@ class Person {
   }
 }
 
-@makeGender
+
+function readonlyProperty(target: any, key: any, index: number) {
+  console.log(target, key, index);
+}
+
+function readonly(target: any, key: any, descriptor: PropertyDescriptor) { 
+  console.log(target, key, descriptor);
+  descriptor.writable = false;
+}
+
+@makeGender 
 class Person2 {
-  title: string;
+  @validate title: string; 
   age = 27;
   constructor() {
     this.title = name;
   }
-  setTitle(title: string) { 
+  setTitle(@readonlyProperty title: string) {
     this.title = title;
   }
+  @readonly 
   sayTitle(): any {
     return this.title;
   }
