@@ -2,6 +2,7 @@
 
   - [intersection & call, apply](#intersection-&-call,-apply)
   - [TS 유틸리티](#TS-유틸리티)
+  - [테코레이터](#테코레이터)
 
 
 
@@ -158,4 +159,174 @@ const b: Readonly<A> = {
 > 간단하게 설명하자면, b가 전부 Readonly 된다. <br>
 > TS 유틸리티에 다양한 기능이 있으니까, 나중에 사용하면 된다. <br>
 >> TS 유틸리티를 잘 활용하면 중복되는 인터페이서, 타이핑을 막을 수 있게 된다. <br>
+
+## 데코레이터
+[위로올라가기](#강좌6)
+
+**데코레이터**는 영어로 장식하다의미이다. <br>
+데코레이터는 클래스의 property, method등을 장식할 수 있다. <br>
+
+```js
+class Person {
+  title: string;
+  age: 27;
+  constructor() {
+    this.title = this.name;
+  }
+  setTitle(title: string) {
+
+  }
+  sayTitle(): any {
+    retrn this.title;
+  }
+}
+```
+> 실제로 꾸미는게 아니라, 기능을 수정하는 것이다. <br>
+> 기능을 왜 굳이 데코레이터로 수정을 하는가? 직접 코드를 수정하는게 낫지않을까?  \<br>
+>> 이것도 중복을 막기위해서 데코레이터를 사용하는 것이다. <br>
+
+```js
+// 함수선언
+function makeGender(target: typeof Person) { // Person의 대한 타입을 타겟 지정한다.
+  return class extends target {
+    // 여기서 꾸며 줄 작업을 한다.
+    gender = 'male';
+    sayGender() {
+      return this.gender;
+    }
+  }
+}
+
+@makeGender // 데코레이트 선언
+class Person {
+  title: string;
+  age = 27;
+  constructor() {
+    this.title = name;
+  }
+  setTitle(title: string) { 
+    this.title = title;
+  }
+  sayTitle(): any {
+    return this.title;
+  }
+}
+
+@makeGender // 데코레이트 선언
+class Person2 {
+  title: string;
+  age = 27;
+  constructor() {
+    this.title = name;
+  }
+  setTitle(title: string) { 
+    this.title = title;
+  }
+  sayTitle(): any {
+    return this.title;
+  }
+}
+```
+> 데코레이트는 함수뿐만아니라 다양하게 만들 수가 있다.. <br>
+> 하지만 에러가 나올 것이다. <br>
+>> `Experimental support for decorators is a feature that is subject to change in a future release. Set the 'experimentalDecorators' option in your 'tsconfig' or 'jsconfig' to remove this warning.ts(1219)`
+
+
+#### tsconfig.js
+```js
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "lib": ["ES5", "ES6", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ESNext", "DOM"],
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "experimentalDecorators": true, // 데코레이터를 사용하기 위해서 이 기능을 true로 해줘야한다.
+  },
+  "exclude": [".js"]
+}
+```
+
+```js
+function makeGender(target: typeof Person) {
+  return class extends target {
+    gender = 'male';
+    sayGender() {
+      return this.gender;
+    }
+  }
+}
+
+@makeGender // 클래스 데코레이터
+class Person {
+  @validate title: string; // 프로퍼티 데코레이터
+  age = 27;
+  constructor() {
+    this.title = name;
+  }
+  setTitle(title: string) { // 여기에다가 @붙이면 파라미터 데코레이터
+    this.title = title;
+  }
+
+  @readonly // 메소드 데코레이터
+  sayTitle(): any {
+    return this.title;
+  }
+}
+
+function readonly(target: any, key: any) {
+
+}
+
+@makeGender // 위에 선언하면 아랫 줄을 꾸며줄 수가 있다.
+class Person2 {
+  @validate title: string; // 이런식으로 데코레이터를 사용할 수가 있다. 
+  // @validate title: string; // 여기에서는 title을 꾸며주는 것이다.
+  age = 27;
+  constructor() {
+    this.title = name;
+  }
+  setTitle(title: string) { 
+    this.title = title;
+  }
+  @readonly 
+  sayTitle(): any {
+    return this.title;
+  }
+}
+```
+> ***데코레이터 자체가는 TS가 아니라 JS 개념이다.*** <br>
+
+
+```js
+...생략
+
+function readonly(target: any, key: any, descriptor: PropertyDescriptor) { 
+  console.log(target, key, descriptor);
+  descriptor.writable = false;
+}
+
+@makeGender 
+class Person2 {
+  @validate title: string; 
+  age = 27;
+  constructor() {
+    this.title = name;
+  }
+  setTitle(title: string) { 
+    this.title = title;
+  }
+  @readonly 
+  sayTitle(): any {
+    return this.title;
+  }
+}
+
+const Lee = new Persion('Lee');
+```
+
+> 데코레이터는 직접구현하는 것은 힘들기 때문에 바벨, Typescript로 이용해서 구현하는게 편하다. <br>
+> 데코레이터 만들어 주었는데 readonly데코레이터를 보면 **매겨변수가 3개**가 있다. <br>
+> **첫 번째 매겨변수는 target, 두 번쨰 매개변수는 key, 세번 쨰 매개변수는 descriptor** <br>
+>> descriptor에서는 ***`writable: 수정 가능 여부, configurable: 설정 가능 여부, enumerable: 반복 가능 여부`***가 있다. <br>
 
