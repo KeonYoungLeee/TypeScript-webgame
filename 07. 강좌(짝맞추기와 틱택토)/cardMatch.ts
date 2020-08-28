@@ -1,15 +1,3 @@
-# 강좌7
-
-  - [짝맞추기 게임](#짝맞추기-게임)
-
-
-
-
-
-## 짝맞추기 게임
-[위로올라가기](#강좌7)
-
-```js
 const horizontal: number = 4;
 const vertical: number = 3;
 const colors: string[] = ['red', 'red', 'orange', 'orange', 'green', 'green', 'yellow', 'yellow', 'white', 'white', 'pink', 'pink'];
@@ -99,5 +87,3 @@ function setCard(horizontal: number, vertical: number) {
 
 shuffle();
 setCard(horizontal, vertical);
-
-```
